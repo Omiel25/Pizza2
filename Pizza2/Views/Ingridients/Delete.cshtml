@@ -1,0 +1,43 @@
+﻿@model EditViewModel<IngridientViewModel>
+
+<h2>Avalible Ingridients</h2>
+<div>
+    <table class="table table-striped table-dark">
+        <tr>
+            <th scope="col"> <h4>ID</h4> </th>
+            <th scope="col"> <h4>Name</h4> </th>
+            <th scope="col"> <h4>Price</h4> </th>
+            <th scope="col"> <h4>Contains Meat</h4> </th>
+            <th scope="col"> <h4>Delete </h4> </th>
+        </tr>
+        @{
+            int count = 0;
+            foreach (var item in Model.itemList)
+            {
+                <tr>
+                    <th scope="row">@count</th>
+                    <td>@item.IngridientName</td>
+                    <td>@item.IngridientPrice</td>
+                    @{
+                        if (@item.ContainsMeat == true)
+                        {
+                            <td> <b>No</b> </td>
+                        }
+                        else
+                        {
+                            <td> <b>Yes</b> </td>
+                        }
+                    }
+                    <td>
+                        <form asp-controller="Ingridients" asp-action="DeleteIngridient" method="post">
+                            <input asp-for=@Model.itemModel.Id type="text" value=@item.Id hidden/>
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                count++;
+            }
+        }
+    </table>
+</div>
+

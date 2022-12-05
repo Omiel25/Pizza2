@@ -1,0 +1,36 @@
+﻿@model List<ItemListHolderModel<PizzaViewModel, string>>
+
+<h2>Avalible Ingridients</h2>
+<div>
+    <table class="table table-striped table-dark">
+        <tr>
+            <th scope="col-1"> <h4>#</h4> </th>
+            <th scope="col"> <h4>Name</h4> </th>
+            <th scope="col-1"> <h4>Ingridients List ID</h4> </th>
+            <th scope="col"> <h4>Ingridients</h4> </th>
+            <th scope="col-2"> <h4>Price</h4> </th>
+        </tr>
+    @{
+        int count = 0;
+        foreach(var item in Model){
+            <tr>
+                <td>@count</td>
+                <td>@item.ItemA.PizzaName</td>
+                <td>@item.ItemA.IngridientsListId</td>
+                <td>
+                @foreach(var ingridient in item.ItemsB)
+                {
+                    <span>@ingridient, </span>
+                }
+            </td>
+                <td>@item.ItemA.PizzaPrice</td>
+                @{
+                count++;
+                }
+            </tr>
+        }
+    }
+        
+    </table>
+</div>
+

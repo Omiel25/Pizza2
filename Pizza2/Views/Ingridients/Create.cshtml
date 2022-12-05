@@ -1,0 +1,29 @@
+﻿@model IngridientViewModel
+
+@{
+    <h1>Create Ingridient</h1>
+
+    <div class="row my-2">
+        <div class="col-6">
+            <form asp-controller="Ingridients" asp-action="CreateIngridient" method="post">
+
+                <div>
+                    <label class="form-label mb-3">Ingridient Name</label>
+                    <input asp-for=IngridientName type="text" class="form-control" />
+                </div>
+
+                <div>
+                    <label class="form-label mb-3">Ingridient Price</label>
+                    <input asp-for=IngridientPrice type="number" class="form-control" />
+                </div>
+
+                <div>
+                    <label class="form-label mb-3 my-2">Does Ingridient contain meat?</label>
+                    <input asp-for=ContainsMeat type="checkbox" class="form-check-input" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+        </div>
+    </div>
+}

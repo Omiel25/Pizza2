@@ -1,0 +1,47 @@
+﻿@model ItemHolderModel<List<MenuViewModel>>
+
+<h1>Delete one of the menus:</h1>
+
+<div class="container">
+    <div class="row">
+        <table class="table table-striped table-dark">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Menu ID</th>
+                <th scope="col">Menu Name</th>
+                <th scope="col"> <b>Is active</b> </th>
+                <th scope="col"><b>#Delete#</b></th>
+            </tr>
+                @{
+                    int count = 0;
+                }
+                @foreach (var menu in Model.heldItem)
+                {
+                    <tr>
+                        <td>@count</td>
+                        <td>@menu.menuId</td>
+                        <td>@menu.menuName</td>
+                        <td>
+                        @if (menu.IsActive == true)
+                        {
+                            <b class="text-success">Activated</b>
+                        }
+                        else if (menu.IsActive == false)
+                        {
+                            <span class="text-danger">Not active</span>
+                        }
+                        </td>
+                        <td>
+                            <form asp-controller="Menu" asp-action="DeleteMenu" method="post">
+                                <input asp-for="@Model.itemId" type="number" value="@menu.menuId" hidden>
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    
+                    count++;
+                }
+
+        </table>
+    </div>
+</div>

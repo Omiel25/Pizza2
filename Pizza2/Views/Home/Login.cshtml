@@ -1,0 +1,39 @@
+﻿@model UserViewModel
+@{
+    //Layout is avalible fo displaying shared views
+    Layout = "~/Views/Shared/Logo.cshtml";
+}
+
+<body>
+
+    <div class="container my-3 text-center info-message">
+        <h1>
+            Login in to the pizzerina app~
+        </h1>
+    </div>
+
+    <div class="container w-50 my-5 login-form">
+        
+       <form asp-controller="Home" asp-action="LoginUser" method="post">
+
+            <div>
+                <label class="form-label mb-3"> Username </label>
+                <input asp-for=UserName type="text" class="form-control" />
+            </div>
+
+            <div>
+                <label class="form-label mb-3"> Password </label>
+                <input asp-for=Password type="password" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-primary px-3 my-2">Login</button>
+
+       </form>
+        
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+

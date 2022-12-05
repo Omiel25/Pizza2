@@ -1,0 +1,36 @@
+﻿@model List<UserViewModel>
+
+
+<h2>List of Users</h2>
+<div>
+    <table class="table table-striped table-dark">
+        <tr>
+            <th scope="col"> <h4>#</h4> </th>
+            <th scope="col"> <h4>ID</h4> </th>
+            <th scope="col"> <h4>Name</h4> </th>
+            <th scope="col"> <h4>Category</h4> </th>
+            <th scope="col"> <h4 class="text-danger"> <b>Delete</b> </h4> </th>
+        </tr>
+    @{
+        int count = 0;
+        foreach(var item in Model)
+            {
+                <tr>
+                    <th scope="row">@count</th>
+                    <td>@item.Id</td>
+                    <td>@item.UserName</td>
+                    <td>
+                        @if(item.Privilages == 0){
+                            <span> Table Station </span>
+                        } else {
+                            <span> Worker Station </span>
+                        }
+                    </td>
+                </tr>
+                count++;
+            }
+        }
+    </table>
+</div>
+
+

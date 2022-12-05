@@ -1,0 +1,67 @@
+﻿@model OrderViewModel
+@{
+    //Layout is responsible fo displaying shared views
+    Layout = "~/Views/Shared/Logo.cshtml";
+}
+
+<div class="container">
+    <div class="row text-center my-3">
+        <div class="card col-12 col-lg-6 mb-3 my-5 text-black">
+
+            <div class="card-header picture-container" id="">
+                <div class="container-fluid" id="confirmation-bg-waiting">
+                    <div class="">
+                        <h4 id="confirmation-header"> Waiting... </h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <h4 id="confirmation-message"> Your order is waiting for the confirmation from our worker... </h4>
+            </div>
+
+           
+        </div>
+        
+        <form asp-action="Index" asp-controller="Home" method="post" id="form" hidden>
+            <button type="submit" class="btn btn-primary">Go back to Menu~</button>
+        </form>
+        
+    </div>
+</div>
+
+<script type="text/javascript">
+    
+    var goBackForm = document.getElementById("form");
+    var cardHeader = document.getElementById("confirmation-bg-waiting");
+    var confirmatonBox = document.getElementById("confirmation-message");
+    
+    var count = 0
+
+    setInterval(function(){
+        $.ajax({
+            url: '/Home/getData',
+            type: 'post',
+            data: { data: @Model.Id },
+            dataType: 'json', 
+            success: function (data) {
+                if(data.isConfirmed == true){
+                    cardHeader.innerHTML = "Success!";
+                    cardHeader.id = "confirmation-bg-confirmed";
+                    confirmatonBox.innerHTML = "Your order is being prepared by our kitches staff!";
+                    goBackForm.hidden = false;
+                    clearInterval();
+                } 
+            },
+            error: function (data) {
+
+                count++;
+                if(count > 20){
+                    alert("Your order either didn't come through or it was denied...")
+                }
+            }
+        });
+    }, 15000);
+
+</script>
+

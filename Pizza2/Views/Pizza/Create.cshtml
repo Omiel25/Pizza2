@@ -1,0 +1,44 @@
+﻿@model AddMultipleModel<PizzaViewModel, int>
+
+<h1>Create Pizza</h1>
+
+<div class="container">
+    <form asp-controller="Pizza" asp-action="CreatePizza" method="post">
+
+        <div class="row">
+            <div class="col">
+                <label class="form-label mb-3">Pizza Name</label>
+                <input asp-for=itemOne.PizzaName type="text" class="form-control" placeholder="ex.Carbonara" required/>
+            </div>
+        </div>
+        
+        <div class="row my-3">
+            <span class="col-12">Pizza Price</span>
+            <div class="input-group align-bottom">
+                <input asp-for=itemTwoList type="number" class="form-control" placeholder="19" required/>
+                <span class="align-text-bottom mt-auto">.</span>
+                <input asp-for=itemTwoList type="number" class="form-control" placeholder="99" required/>
+                <span class="px-1 align-text-bottom mt-auto">pln</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <label class="form-label mb-3 my-3">Pizza Ingridients list ID</label>
+                <select asp-for=itemOne.IngridientsListId class="form-select">
+                    @{
+                        foreach (var id in Model.itemTwoList)
+                        {
+                            <option value="@id">@id</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <button type="submit" class="btn btn-primary my-2">Save</button>
+        </div>
+
+    </form>
+</div>

@@ -1,0 +1,156 @@
+html {
+  font-size: 14px;
+  
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+
+}
+
+header{
+    background-color: white;
+    border-bottom:1px solid grey;
+}
+
+.line-container{
+    text-align:center;
+    width:75%;
+}
+
+body {
+    margin-bottom: 60px;
+    background-image: url("../images/Side.jpg");
+    background-attachment: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    min-height:80%;
+}
+
+.footer {
+    background: white;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px;
+}
+
+div h1{
+    margin: 3.8vw 0 0 0;
+    font-family:'Rubik', cursive;
+}
+
+.login-form {
+    border: 2px solid grey;
+    border-radius: 6vw;
+    padding: 60px 60px;
+}
+
+.login-form div{
+    margin: 0 0 1.6vw 0;
+    font-weight: 600;
+}
+
+.options li {
+    font-family: 'Rubik', sans-serif;
+}
+.options li:hover{
+    background-color:lightgrey;
+}
+
+.text-special {
+    font-family: 'Dancing Script', cursive;
+    margin: 0px 2vw;
+}
+
+.row .card {
+    text-align: center;
+    margin: 0px 0.8vw;
+    border: 1px solid rgb(30, 30, 30);
+    border-radius: 1vw;
+    padding: 0;
+    color: white;
+}
+
+.row {
+    justify-content:center;
+}
+
+.card .card-header {
+    font-family: 'Rubik', sans-serif;
+    background: rgb(60, 59, 59);
+    border-radius: 1vw 1vw 0 0;
+}
+
+.panel .card .card-body {
+    margin: 0 20%;
+    max-width: 80%;
+}
+
+.card .card-body {
+    max-width: 90%;
+    margin: 0 5%;
+}
+
+.card .card-footer {
+    background: rgb(60, 59, 59);
+    border-radius: 0 0 1vw 1vw;
+}
+
+.card-body + .card-body{
+    border-top:1px solid grey;
+}
+
+.picture-container {
+    padding: 0;
+    margin: 0;
+}
+
+
+#menu-picture {
+    background-image: url("../images/AvalibleMenu/bg-wood.png");
+}
+
+.main-quote {
+    float: left;
+    display: inline;
+    width: 49%;
+}
+
+#shopping-cart-icon {
+    display: inline;
+    width: 49%;
+    background: url("../images/ShoppingCart.png") no-repeat;
+    cursor: pointer;
+    width: auto;
+    height: 36px;
+    border: none;
+    border-radius: 30px;
+}
+
+#confirmation-bg-waiting {
+    background: rgb(195,147,34);
+    background: linear-gradient(0deg, rgba(195,147,34,1) 0%, rgba(195,99,34,1) 100%);
+    padding: 5px 0;
+    margin: 0px;
+    font-family: 'Rubik', sans-serif;
+    border-radius: 1vw 1vw 0 0;
+}
+
+#confirmation-bg-confirmed {
+    background: rgb(102,195,34);
+    background: linear-gradient(0deg, rgba(102,195,34,1) 0%, rgba(34,195,88,1) 100%);
+    padding: 5px 0;
+    margin: 0px;
+    font-family: 'Rubik', sans-serif;
+    border-radius: 1vw 1vw 0 0;
+}

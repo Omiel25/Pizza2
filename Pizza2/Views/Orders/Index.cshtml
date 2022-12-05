@@ -1,0 +1,50 @@
+﻿<h4>This is my Menu Manager page!</h4>
+<p>This is page for managing restaurant Menu~~</p>
+<div class="container line-container">
+    <hr />
+</div>
+
+<div class="container panel">
+    <div class="row ">
+        
+        <!--
+            1.Get orders
+            2.Sort Them into the table (Count, orderer name, ordered items, accept, reject);
+            3.Update table every 30 seconds
+        -->
+
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var goBackForm = document.getElementById("form");
+
+    var count = 0
+
+    setInterval(function () {
+        $.ajax({
+            url: '/Orders/getData',
+            type: 'post',
+            data: { data: @Model.Id },
+            dataType: 'json',
+            success: function (data) {
+                if (data.isConfirmed == true) {
+                    cardHeader.innerHTML = "Success!";
+                    cardHeader.id = "confirmation-bg-confirmed";
+                    confirmatonBox.innerHTML = "Your order is being prepared by our kitches staff!";
+                    goBackForm.hidden = false;
+                    clearInterval();
+                }
+            },
+            error: function (data) {
+
+                count++;
+                if (count > 20) {
+                    alert("Your order either didn't come through or it was denied...")
+                }
+            }
+        });
+    }, 15000);
+
+</script>

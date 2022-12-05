@@ -1,0 +1,57 @@
+﻿@model List<PizzaViewModel>
+
+@{
+    //Layout is responsible fo displaying shared views
+    Layout = "~/Views/Shared/Logo.cshtml";
+}
+
+<div class="container text-center my-5">
+    <h4>My Order Page ~</h4>
+</div>
+
+<div class="container line-container my-4">
+    <hr />
+</div>
+@{
+    var total = 0.0f;
+    var count = 0;
+}
+
+<div class="container my-3 w-75">
+    <div class="row">
+        <form asp-action="MakeOrder" asp-controller="Home" method="post">
+            <table class="table table-light table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Pizza</th>
+                        <th scope="col">Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <th scope="row">@count</th>
+                            <td>@item.PizzaName</td>
+                            <td>@item.PizzaPrice</td>
+                            <input type="number" asp-for="@Model[count].Id" value="@item.Id" hidden>
+                        </tr>
+
+                        total += item.PizzaPrice;
+                        count++;
+                    }
+                    <tr>
+                        <td class="bg-white">&nbsp;</td>
+                        <td class="float-end">Total: </td>
+                        <td class="">@total</td>
+                    </tr>
+                </tbody>
+
+            </table>
+            <button type="submit" class="btn btn-primary my-1 w-100">Pay up and give me my pizza already!</button>
+        </form>
+    </div>
+</div>
+
+

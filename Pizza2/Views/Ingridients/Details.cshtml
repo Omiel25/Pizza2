@@ -1,0 +1,38 @@
+﻿@model List<IngridientViewModel>
+
+
+<h2>Avalible Ingridients</h2>
+<div>
+    <table class="table table-striped table-dark">
+        <tr>
+            <th scope="col"> <h4>ID</h4> </th>
+            <th scope="col"> <h4>Name</h4> </th>
+            <th scope="col"> <h4>Price</h4> </th>
+            <th scope="col"> <h4>Contains Meat</h4> </th>
+        </tr>
+    @{
+        int count = 0;
+        foreach(var item in Model)
+            {
+                <tr>
+                    <th scope="row">@count</th>
+                    <td>@item.IngridientName</td>
+                    <td>@item.IngridientPrice pln</td>
+                    @{
+                        if (@item.ContainsMeat == true)
+                        {
+                            <td> <b class="text-danger">Yes</b> </td>
+                        }
+                        else
+                        {
+                            <td> <b class="text-success">No</b> </td>
+                    }
+                }
+
+                </tr>
+                count++;
+            }
+        }
+    </table>
+</div>
+

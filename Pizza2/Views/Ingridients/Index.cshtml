@@ -1,0 +1,75 @@
+﻿@{
+    <h4>This is my Ingridients page!</h4>
+    <p>This is page for managing avalible Ingridients~~</p>
+    <div class="container line-container">
+        <hr />
+    </div>
+
+    <div class="container panel">
+        <div class="row">
+            <div class="card col-7 col-lg-5 mb-3">
+                <div class="card-header">
+                    <h5>Ingridient Creation</h5>
+                </div>
+
+                <div class="card-body">
+                    <img src="~/images/Ingridients/SkładnikiDodaj.png" class="img-fluid" alt="Responsive image">
+                </div>
+
+                <div class="card-footer">
+                    <a class="nav-link text-dark col btn btn-primary m-3 py-2 text-white"
+                        asp-area="" asp-controller="Ingridients" asp-action="Create">Create</a>
+                </div>
+            </div>
+
+            <div class="card col-7 col-lg-5 mb-3">
+                <div class="card-header">
+                    <h5>Ingridient Details</h5>
+                </div>
+
+                <div class="card-body">
+                    <img src="~/images/Ingridients/SkładnikiDetale.png" class="img-fluid" alt="Responsive image">
+                </div>
+
+                <div class="card-footer">
+                    <a class="nav-link text-dark col btn btn-primary m-3 py-2 text-white"
+                   asp-area="" asp-controller="Ingridients" asp-action="Details">Details</a>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="row">
+            <div class="card col-7 col-lg-5 mb-3">
+                <div class="card-header">
+                    <h5>Delete Ingridient</h5>
+                </div>
+
+                <div class="card-body">
+                    <img src="~/images/Ingridients/SkładnikiUsun.png" class="img-fluid" alt="Responsive image">
+                </div>
+
+                <div class="card-footer">
+                    <a class="nav-link text-dark col btn btn-primary m-3 py-2 text-white"
+                   asp-area="" asp-controller="Ingridients" asp-action="Delete">Delete</a>
+                </div>
+            </div>
+
+            <div class="card col-7 col-lg-5 mb-3">
+                <div class="card-header">
+                    <h5>Edit Ingridient</h5>
+                </div>
+
+                <div class="card-body">
+                    <img src="~/images/Ingridients/SkładnikiEdytuj.png" class="img-fluid" alt="Responsive image">
+                </div>
+
+                <div class="card-footer">
+                    <a class="nav-link text-dark col btn btn-primary m-3 py-2 text-white"
+                   asp-area="" asp-controller="Ingridients" asp-action="Edit">Edit</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}

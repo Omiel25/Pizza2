@@ -8,6 +8,7 @@
     <div class="row ">
         
         <!--
+            1.1.Add Button to toggle "Refresh orders"
             1.Get orders
             2.Sort Them into the table (Count, orderer name, ordered items, accept, reject);
             3.Update table every 30 seconds
@@ -29,12 +30,8 @@
             data: { data: @Model.Id },
             dataType: 'json',
             success: function (data) {
-                if (data.isConfirmed == true) {
-                    cardHeader.innerHTML = "Success!";
-                    cardHeader.id = "confirmation-bg-confirmed";
-                    confirmatonBox.innerHTML = "Your order is being prepared by our kitches staff!";
-                    goBackForm.hidden = false;
-                    clearInterval();
+                if (true) {
+                    
                 }
             },
             error: function (data) {

@@ -17,8 +17,21 @@ namespace Pizza2.Controllers
         {
             if (IsWorker())
             {
-                var Orders = _context.Orders.Where(p => p.OrderConfirmed == false).Select(p => p).ToList();
-                return View();
+                List<ItemListHolderModel<OrderViewModel, OrderItemsViewModel>> model = new List<ItemListHolderModel<OrderViewModel, OrderItemsViewModel>>();
+                var orders = _context.Orders.Where(p => p.OrderConfirmed == false).Select(p => p).ToList();
+
+                foreach (var order in orders)
+                {
+                    ItemListHolderModel<OrderViewModel, OrderItemsViewModel> item = new ItemListHolderModel<OrderViewModel, OrderItemsViewModel>();
+                    item.ItemsB = new List<OrderItemsViewModel>();
+
+                    item.ItemA = order;
+                    item.ItemsB.AddRange(_context.OrderItems.Where(p => p.OrderId == order.Id).Select(p => p).ToList());
+                    model.Add(item);
+
+                }
+
+                return View(model);
             }
             else
             {

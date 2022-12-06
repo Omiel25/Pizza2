@@ -6,10 +6,24 @@
 
 <div class="container panel">
     <div class="row ">
-        
+        <table class="table table-striped table-dark">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Table</th>
+                    <th>Order</th>
+                    <th>Price</th>
+                    <th>Confirm</th>
+                    <th>Reject</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+
+            </tbody>
+        </table>
         <!--
             1.1.Add Button to toggle "Refresh orders"
-            1.Get orders
+            1.Get orderss
             2.Sort Them into the table (Count, orderer name, ordered items, accept, reject);
             3.Update table every 30 seconds
         -->
@@ -18,8 +32,7 @@
 </div>
 
 <script type="text/javascript">
-
-    var goBackForm = document.getElementById("form");
+    var ordersTable = document.getElementById("table-body");
 
     var count = 0
 
@@ -31,14 +44,18 @@
             dataType: 'json',
             success: function (data) {
                 if (true) {
-                    
+                    ordersTable.innerHTML = "";
+                    for (var i = 0; i < data.length; i++) {
+                        var trTemplate = `<tr><td>${i}</td><td>${}</td><td>${}</td><td>${}</td></tr>`
+                        ordersTable.append()
+                    }
                 }
             },
             error: function (data) {
 
                 count++;
                 if (count > 20) {
-                    alert("Your order either didn't come through or it was denied...")
+                    alert("Something went wrong...")
                 }
             }
         });

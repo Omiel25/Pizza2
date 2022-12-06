@@ -77,16 +77,39 @@ namespace Pizza2.Controllers
             
         }
 
-        public ActionResult GetOrders()
+        public JsonResult GetOrders(int id)
         {
             if (IsWorker() || IsAdmin())    
             {
-                return View();
+                //Get all orders items
+                List<ItemListHolderModel<OrderViewModel, string>> model = new List<ItemListHolderModel<OrderViewModel, string>>();
+                var orders = _context.Orders.Select(o => o);
+
+                foreach(var order in orders)
+                {
+                    ItemListHolderModel<OrderViewModel, string> itemHolder = new ItemListHolderModel<OrderViewModel, string>();
+                    
+                    //GetOrdersIds
+                    var orderList = _context.OrderItems.Where(oi => oi.OrderId == order.Id).Select(oi => oi.PizzaId).ToList();
+                    List<string> pizzas = new List<string>();
+                    foreach(var item in orderList)
+                    {
+                        var pizza = _context.Pizzas.Single(p => p.Id == item);
+                        pizzas.Add(pizza.PizzaName);
+                    }
+
+                    itemHolder.ItemA = order;
+                    itemHolder.ItemsB = pizzas;
+
+                }
+
+                //Needed info for searching pizzas
+
+                
+                return Json(new {data = model });
             }
-            else
-            {
-                return RedirectToAction("Login", "Home");
-            }
+
+            return Json(new { data = "" });
         }
     }
 }

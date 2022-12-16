@@ -64,13 +64,11 @@ namespace Pizza2.Controllers
             }
             else if (IsWorker())
             {
-
-                //worker station panel (Manu + Orders)
-                return View();
+                //worker station panel (Menu + Orders)
+                return RedirectToAction("Index", "Orders");
             }
             else if (IsAdmin())
             {
-
                 //Admin Panel (Everything besides Menu)
                 return View();
             } else {
@@ -87,12 +85,12 @@ namespace Pizza2.Controllers
         public IActionResult AvalibleMenu()
         {
             //Need to change it- get both pizzas AND Ingridients names (Maybe make new model, idk)
-            if(!IsUser())
+            if(IsUser() == false && IsWorker() == false)
             {
                 TempData["error"] = "Unauthorized access!";
                 return View("Login");
 
-            } else {
+            } else if (IsWorker() || IsUser()) {
 
                 //Initiate List Holder
                 List<ItemListHolderModel<PizzaViewModel, string>> model = new List<ItemListHolderModel<PizzaViewModel, string>>();
@@ -126,7 +124,11 @@ namespace Pizza2.Controllers
                     model.Add(pizza);
                 }
 
+                TempData["privilages"] = GetSessionPrivilages();
                 return View(model);
+            } else {
+                TempData["error"] = "Something went wrong!";
+                return View("Login");
             }
             
         }
@@ -209,9 +211,14 @@ namespace Pizza2.Controllers
                     _context.OrderItems.AddRange(orderList);
                     _context.SaveChanges();
 
-                    //Redirect to thank you page nad go back to index after few seconds
-
-                    return View("SeeOrder", order);
+                    //If order maker is USer redirect them to thank you page nad go back to index after few seconds
+                    if (IsUser())
+                    {
+                        return RedirectToAction(nameof(SeeOrder), order);
+                    } else {
+                        return RedirectToAction(nameof(Index), "Orders");
+                    }
+                    
                     //return View();
                 } else
                 {
@@ -224,6 +231,11 @@ namespace Pizza2.Controllers
                 TempData["error"] = "Unauthorized access!";
                 return View("Login");
             }
+        }
+
+        public IActionResult SeeOrder(OrderViewModel order)
+        {
+            return View(order);
         }
         public IActionResult Logout()
         {
@@ -242,9 +254,17 @@ namespace Pizza2.Controllers
         public JsonResult GetData(string data)
         {
             int id = Convert.ToInt32(data);
-            var order = _context.Orders.Single(p => p.Id == id);
+            var confirmation = false;
+            try
+            {
+                confirmation = _context.Orders.Single(p => p.Id == id).OrderConfirmed;
+            } catch(Exception e)
+            {
+                confirmation = false;
+            }
+           
 
-            return Json(new { isConfirmed = order.OrderConfirmed});
+            return Json(new { isConfirmed = confirmation});
         }
         
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

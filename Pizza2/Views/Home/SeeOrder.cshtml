@@ -48,7 +48,7 @@
                 if(data.isConfirmed == true){
                     cardHeader.innerHTML = "Success!";
                     cardHeader.id = "confirmation-bg-confirmed";
-                    confirmatonBox.innerHTML = "Your order is being prepared by our kitches staff!";
+                    confirmatonBox.innerHTML = "Your order is being prepared by our staff!";
                     goBackForm.hidden = false;
                     clearInterval();
                 } 
@@ -58,6 +58,7 @@
                 count++;
                 if(count > 20){
                     alert("Your order either didn't come through or it was denied...")
+                    count = 0;
                 }
             }
         });

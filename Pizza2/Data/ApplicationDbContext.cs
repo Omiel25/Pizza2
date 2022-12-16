@@ -10,6 +10,7 @@ namespace Pizza2.Data
         public DbSet<PizzaViewModel> Pizzas { get; set; }
         public DbSet<OrderItemsViewModel> OrderItems { get; set; }
         public DbSet<OrderViewModel> Orders { get; set; }
+        public DbSet<OrderHistoryViewModel> OrdersHistory { get; set; }
         public DbSet<MenuViewModel> Menu { get; set; }
         public DbSet<UserViewModel> User { get; set; }
 
@@ -19,6 +20,7 @@ namespace Pizza2.Data
         {
 
         }
+
 
     }
 }

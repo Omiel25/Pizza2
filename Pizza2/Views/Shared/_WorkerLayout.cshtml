@@ -26,7 +26,10 @@
                             <a class="nav-link border-1 border-end" asp-area="" asp-controller="Home" asp-action="AvalibleMenu">Menu</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link border-1 border-end" asp-area="" asp-controller="Orders" asp-action="WorkerOrders">See Orders</a>
+                            <a class="nav-link border-1 border-end" asp-area="" asp-controller="Orders" asp-action="Index">Pending Orders</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link border-1 border-end" asp-area="" asp-controller="Orders" asp-action="AcceptedOrders">Accepted Orders</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-danger " asp-area="" asp-controller="Home" asp-action="Logout">Log Out</a>
@@ -73,6 +76,7 @@
             &copy; 2022 - Pizza2App - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

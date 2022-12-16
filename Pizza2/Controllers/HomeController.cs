@@ -62,7 +62,7 @@ namespace Pizza2.Controllers
                 ViewData["TableName"] = GetSessionUsername();
                 return RedirectToAction(nameof(AvalibleMenu));
             }
-            else if (IsWorker())
+            else if (IsWorker() && !IsAdmin())
             {
                 //worker station panel (Menu + Orders)
                 return RedirectToAction("Index", "Orders");
@@ -149,6 +149,7 @@ namespace Pizza2.Controllers
                     }
 
                     ViewData["User"] = GetSessionUsername();
+                    TempData["privilages"] = GetSessionPrivilages();
 
                     return View(selectedPizzas);
                 } else

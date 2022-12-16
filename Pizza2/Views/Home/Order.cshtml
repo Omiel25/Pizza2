@@ -1,8 +1,16 @@
 ﻿@model List<PizzaViewModel>
 
 @{
-    //Layout is responsible fo displaying shared views
-    Layout = "~/Views/Shared/Logo.cshtml";
+    //Layout is avalible fo displaying shared views
+    if ((int)TempData["privilages"] == 1)
+    {
+        Layout = "~/Views/Shared/_WorkerLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/Logo.cshtml";
+    }
+
 }
 
 <div class="container text-center my-5">

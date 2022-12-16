@@ -10,6 +10,7 @@
                     <th scope="col"> <h4>Name</h4> </th>
                     <th scope="col"> <h4>Price</h4> </th>
                     <th scope="col"> <h4>Is Vege</h4> </th>
+                    <th scope="col"> <h4>Display Priority</h4> </th>
                     <th scope="col"> <h4>Confrim Change</h4> </th>
                 </tr>
 
@@ -30,6 +31,7 @@
                                         }
                                     }
                                     </td>
+                                    <td> <input asp-for=itemModel.DisplayPriority type="number" value="@item.DisplayPriority"> </td>
                                     <td>
                                         <input asp-for=itemModel.Id type="number" value="@item.Id" hidden>
                                         <button type="submit" class="btn btn-success">Submit</button> 

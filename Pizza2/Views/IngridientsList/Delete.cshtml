@@ -21,35 +21,37 @@
                         if (item.IngridientInListId != currentListId)
                         {
                             currentListId = item.IngridientInListId;
-                            <tr>
-                                <td>@count</td>
-                                <td>@item.IngridientInListId</td>
-                                <td>
-                                    @{
+                                <tr>
+                                    <td>@count</td>
+                                    <td>@item.IngridientInListId</td>
+                                    <td>
+                                        @{
                                         foreach (var ingridient in Model)
                                         {
                                             if (ingridient.IngridientInListId == currentListId)
                                             {
                                                 string text = ingridient.IngridientName + ", ";
-                                                <b>@text</b>
+                                                        <b>@text</b>
                                             }
                                             else
                                             {
                                                 continue;
                                             }
                                         }
-                                    }
-                                </td>
-                                <form asp-controller="IngridientsList" asp-action="DeleteIngridientsList" method="post">
-                                    <td>
-                                        <input type="number" asp-for="@Model[count].IngridientInListId" hidden>
-                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                        }
                                     </td>
-                                </form>
-                                
+                                    <form asp-controller="IngridientsList" asp-action="DeleteIngridientsList" method="post">
+                                        <td>
+                                            <input type="number" asp-for="@Model[count].IngridientInListId" hidden>
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </td>
+                                    </form>
+                                    
 
-                                @count++;
-                            </tr>
+                                @{
+                                    count++;
+                                }
+                                </tr>
                         }
                         
                     }

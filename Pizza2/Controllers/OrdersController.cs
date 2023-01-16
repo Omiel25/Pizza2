@@ -70,8 +70,21 @@ namespace Pizza2.Controllers
             }
             
         }
+        public IActionResult OrdersHistory()
+        {
+            if (IsAdmin())
+            {
+                var ordersHistory = _context.OrdersHistory.OrderBy(oh => oh.CreatedAt).Select(oh => oh).ToList();
+                return View(ordersHistory);
+            } else
+            {
+                TempData["error"] = "Unauthorized access attempt!";
+                return RedirectToAction("Login", "Home");
+            }
+        }
+
         [HttpPost]
-        public ActionResult ConfirmOrder(int orderId)
+        public IActionResult ConfirmOrder(int orderId)
         {
             if (IsWorker())
             {
@@ -90,7 +103,7 @@ namespace Pizza2.Controllers
         }
 
         [HttpPost]
-        public ActionResult RejectOrder(int orderId)
+        public IActionResult RejectOrder(int orderId)
         {
             if (IsWorker())
             {

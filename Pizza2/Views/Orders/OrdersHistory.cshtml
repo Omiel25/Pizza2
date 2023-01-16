@@ -1,5 +1,54 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model List<OrderHistoryViewModel>
 @{
+    int count = 0;
 }
+
+<h5>Orders history page!</h5>
+<p>This is page with restaurant order history~~</p>
+
+<div class="container line-container">
+    <hr />
+</div>
+
+<div class="container panel">
+    <div class="row ">
+
+        <table class="table table-dark" id="data-table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Created at</th>
+                    <th scope="col">Orderer Name</th>
+                    <th scope="col">Order Price</th>
+                    <th scope="col">Confirmed</th>
+                    <th scope="col">Rejected</th>
+                </tr>
+            </thead>
+            <tbody id="data-table-body">
+                @foreach(var order in Model){
+                    <tr>
+                        <td>@count</td>
+                        <td>@order.CreatedAt.ToShortDateString(), @order.CreatedAt.ToShortTimeString() </td>
+                        <td>@order.OrderMakerName</td>
+                        <td>@order.OrderPrice</td>
+                        @if(order.OrderAccepted == true){
+                            <td class="bg bg-success">X</td>
+                            <td class=""></td>
+                        } else {
+                            <td class=""></td>
+                            <td class="bg bg-danger">X</td>
+                        }
+                    </tr>
+                    count++;
+                }
+            </tbody>
+
+        </table>
+
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#data-table').DataTable();
+    });
+</script>

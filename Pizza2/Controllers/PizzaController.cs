@@ -101,6 +101,7 @@ namespace Pizza2.Controllers
                     //Get list of ingridnets names for target pizza and fill our model with it
                     var query = from list in _context.PizzaIngridients
                                 join i in _context.Ingridients on list.IngridientId equals i.Id
+                                orderby i.DisplayPriority ascending
                                 select new
                                 {
                                     ingridientListId = list.PizzaIngridientListId,
@@ -146,6 +147,7 @@ namespace Pizza2.Controllers
                     //Get list of ingridnets names for target pizza and fill our model with it
                     var query = from list in _context.PizzaIngridients
                                 join i in _context.Ingridients on list.IngridientId equals i.Id
+                                orderby i.DisplayPriority ascending
                                 select new
                                 {
                                     ingridientListId = list.PizzaIngridientListId,

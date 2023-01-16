@@ -104,6 +104,7 @@ namespace Pizza2.Controllers
                 //var ingridientsList = _context.Ingridients.Join($"SELECT PizzaIngridients.IngridientId, Ingridients.Id, Ingridients.IngridientName FROM PizzaIngridients INNER JOIN Ingridients ON PizzaIngridients.IngridientId = Ingridients.Id;").ToList();
                 var query = from list in _context.PizzaIngridients
                             join i in _context.Ingridients on list.IngridientId equals i.Id
+                            orderby list.PizzaIngridientListId, i.DisplayPriority ascending
                             select new
                             {
                                 ingridientListId = list.PizzaIngridientListId,

@@ -53,8 +53,8 @@
                             <tr>
                                 <td>${order.orderId}</td>
                                 <td>${order.ordererName}</td>
-                                <td>${order.pizzas}pln</td>
-                                <td>${order.price}</td>
+                                <td>${order.pizzas}</td>
+                                <td>${order.price}pln</td>
                                 <td>
                                     <form action="/Orders/ConfirmOrder" method="post">
                                         <input name="orderId" type="number" value="${order.orderId}" hidden>
@@ -96,8 +96,8 @@
                         <tr>
                             <td>${order.orderId}</td>
                             <td>${order.ordererName}</td>
-                            <td>${order.pizzas}pln</td>
-                            <td>${order.price}</td>
+                            <td>${order.pizzas}</td>
+                            <td>${order.price}pln</td>
                             <td>
                                 <form action="/Orders/ConfirmOrder" method="post">
                                     <input name="orderId" type="number" value="${order.orderId}" hidden>

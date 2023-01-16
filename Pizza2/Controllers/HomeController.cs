@@ -96,7 +96,12 @@ namespace Pizza2.Controllers
                 List<ItemListHolderModel<PizzaViewModel, string>> model = new List<ItemListHolderModel<PizzaViewModel, string>>();
 
                 //Get pizzas (ItemA)
-                var pizzas = _context.Pizzas.Select(d => d).ToList();
+                //var pizzas = _context.Pizzas.OrderBy(p => p.PizzaPrice).Select(p => p).ToList();
+                var pizzas = from menu in _context.Menu
+                              join p in _context.Pizzas
+                              on menu.PizzaId equals p.Id
+                              where menu.IsActive
+                              select p;
 
                 foreach (var item in pizzas)
                 {
@@ -107,6 +112,7 @@ namespace Pizza2.Controllers
                     //Get list of ingridnets names for target pizza and fill our model with it
                     var query = from list in _context.PizzaIngridients
                                 join i in _context.Ingridients on list.IngridientId equals i.Id
+                                orderby i.DisplayPriority ascending
                                 select new
                                 {
                                     ingridientListId = list.PizzaIngridientListId,
@@ -123,6 +129,7 @@ namespace Pizza2.Controllers
 
                     model.Add(pizza);
                 }
+
 
                 TempData["privilages"] = GetSessionPrivilages();
                 return View(model);

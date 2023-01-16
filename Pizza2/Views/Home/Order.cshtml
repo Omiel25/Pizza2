@@ -14,7 +14,7 @@
 }
 
 <div class="container text-center my-5">
-    <h4>My Order Page ~</h4>
+    <h4>See my Order ~</h4>
 </div>
 
 <div class="container line-container my-4">
@@ -57,7 +57,10 @@
                 </tbody>
 
             </table>
-            <button type="submit" class="btn btn-primary my-1 w-100">Pay up and give me my pizza already!</button>
+            <button type="submit" class="btn btn-success my-1 w-100">Pay up and give me my pizza already!</button>
+        </form>
+        <form asp-action="AvalibleMenu" asp-controller="Home" method="post">
+            <button type="submit" class="btn btn-danger my-1 w-100">I changed my mind, go back!</button>
         </form>
     </div>
 </div>

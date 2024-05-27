@@ -11,31 +11,42 @@
                     <th scope="col">Price</th>
                     <th scope="col">Add?</th>
                 </tr>
-                @{
-                    int count = 0;
-                    foreach(var ingridient in Model.itemTwoList){
-                            <tr>
-                                <td>#@count</td>
-                                @{
-                                if (@ingridient.heldItem.ContainsMeat == true)
-                                {
-                                    <td class="text-danger"> <b>@ingridient.heldItem.IngridientName</b> </td>
-                                }
-                                else
-                                {
-                                    <td class="text-success"> <b>@ingridient.heldItem.IngridientName</b> </td>
-                                }
-                                }
+            @{
+                int count = 0;
+                foreach(var ingridient in Model.itemTwoList){
+                    <tr>
+                        <td>#@count</td>
+                        @{
+                        if (@ingridient.heldItem.ContainsMeat == true)
+                        {
+                            <td class="text-danger"> <b>@ingridient.heldItem.IngridientName</b> </td>
+                        }
+                        else
+                        {
+                            <td class="text-success"> <b>@ingridient.heldItem.IngridientName</b> </td>
+                        }
+                        }
 
-                                <td>@ingridient.heldItem.IngridientPrice pln</td>
-                                <td> 
-                                    <input asp-for=@Model.itemTwoList[count].addItem type="checkbox" class="form-check-input"> 
-                                </td>
-                            </tr>
+                        <td>@ingridient.heldItem.IngridientPrice pln</td>
+                        <td> 
+                        @if(ingridient.heldItem.IngridientName.Contains("Sauce", StringComparison.CurrentCultureIgnoreCase ))
+                        {
+                            <input type="radio" name="Sauce" class="form-check-input" value="@ingridient.heldItem.Id">
+                        } else
+                        {
+                            if(ingridient.heldItem.IngridientName == "Pizza Pie"){
+                                <input type="checkbox" name="@ingridient.heldItem.Id" class="form-check-input" value="true" checked readonly>
+                            } else {
+                                <input type="checkbox" name="@ingridient.heldItem.Id" class="form-check-input" value="false">
+                            }
+                            
+                        }
+                        </td>
+                    </tr>
 
-                        count++;
-                    }
+                    count++;
                 }
+            }
             </table>
 
             <button type="submit" class="btn btn-primary my-2">Save</button>

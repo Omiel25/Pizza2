@@ -95,14 +95,11 @@
             var id = data.value;
             var name = pizzaName.value;
 
-            //Insert input into form v1
             var newInput = "";
 
-            //newInput.innerHTML = `<input type="number" asp-for="@@Model[${cartSizeCount}].Id" value="${id}" id="data" hidden>`;
             newInput = `<input type="number" name="Model[${cartSizeCount}].Id" value="${id}" id="data" hidden>`;
 
             cartContainer.innerHTML += newInput;
-            //cartContainer.appendChild(newInput);
             
             cartSizeCount++;
 

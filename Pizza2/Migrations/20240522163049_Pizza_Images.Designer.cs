@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pizza2.Data;
 
@@ -11,9 +12,10 @@ using Pizza2.Data;
 namespace Pizza2.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240522163049_Pizza_Images")]
+    partial class Pizza_Images
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,6 +37,10 @@ namespace Pizza2.Migrations
 
                     b.Property<int>("DisplayPriority")
                         .HasColumnType("int");
+
+                    b.Property<string>("ImageName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ImagePriority")
                         .HasColumnType("int");
@@ -101,7 +107,7 @@ namespace Pizza2.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float?>("OrderPrice")
+                    b.Property<float>("OrderPrice")
                         .HasColumnType("real");
 
                     b.HasKey("Id");
@@ -143,7 +149,7 @@ namespace Pizza2.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float?>("OrderPrice")
+                    b.Property<float>("OrderPrice")
                         .HasColumnType("real");
 
                     b.HasKey("Id");
@@ -188,7 +194,7 @@ namespace Pizza2.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float?>("PizzaPrice")
+                    b.Property<float>("PizzaPrice")
                         .HasColumnType("real");
 
                     b.HasKey("Id");

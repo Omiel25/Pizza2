@@ -16,27 +16,31 @@ namespace Pizza2.Controllers
             this._context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index( )
         {
             if (IsAdmin())
             {
                 return View();
-            } else
-            {
-                return RedirectToAction("Login", "Home");
             }
-            
+            else
+            {
+                return RedirectToAction( "Login", "Home" );
+            }
+
         }
 
-        public IActionResult Create()
+        public IActionResult Create( )
         {
             if (IsAdmin())
             {
                 AddMultipleModel<IngridientViewModel, ItemHolderModel<IngridientViewModel>> models =
                 new AddMultipleModel<IngridientViewModel, ItemHolderModel<IngridientViewModel>>();
 
-                var ingridients = _context.Ingridients.OrderBy(p => p.IngridientName).Select(p => p).ToList();
-                models.itemOneList = ingridients;
+                List<IngridientViewModel> ingridientsToAdd = _context.Ingridients
+                    .OrderBy( p => p.DisplayPriority )
+                    .ToList();
+
+                models.itemOneList = ingridientsToAdd;
                 models.itemTwoList = new List<ItemHolderModel<IngridientViewModel>>();
 
                 //Loop creating items and adding them to the right list
@@ -45,59 +49,63 @@ namespace Pizza2.Controllers
                     var itemToAdd = new ItemHolderModel<IngridientViewModel>();
                     itemToAdd.heldItem = item;
                     itemToAdd.addItem = false;
-                    models.itemTwoList.Add(itemToAdd);
+                    models.itemTwoList.Add( itemToAdd );
                 }
 
-                return View(models);
+                return View( models );
             }
             else
             {
-                return RedirectToAction("Login", "Home");
+                return RedirectToAction( "Login", "Home" );
             }
-            
+
         }
 
-        public IActionResult CreateIngridientsList(AddMultipleModel<IngridientViewModel, ItemHolderModel<IngridientViewModel>> models)
+        public IActionResult CreateIngridientsList(IFormCollection collection)
         {
             if (IsAdmin())
             {
                 //Fill empty field "heldItem" from models to match selected ingridients
-                var ingridients = _context.Ingridients.FromSqlInterpolated($"SELECT * FROM dbo.Ingridients").ToList();
-                int count = 0;
-                foreach (var ingridient in ingridients)
-                {
-                    models.itemTwoList[count].heldItem = ingridient;
-                    count++;
-                }
+                var ingridients = _context.Ingridients.ToList();
 
-                //Get Max ID value to select ID for next Ingridient List
-                var result = _context.PizzaIngridients.Max(p => (int?)p.PizzaIngridientListId) ?? 0;
-                count = result;
+                ////Get Max ID value to select ID for next Ingridient List
+                int result = _context.PizzaIngridients.Max( p => (int?)p.PizzaIngridientListId ) ?? 0;
+                result++;
 
-                //3.Do below loop
-                foreach (var item in models.itemTwoList)
+                foreach(var item in collection)
                 {
-                    if (item.addItem == true)
+                    if (item.Key == "__RequestVerificationToken")
+                        continue;
+
+                    PizzaIngridientsViewModel model = new PizzaIngridientsViewModel() { PizzaIngridientListId = result };
+                    string findIngridientID = item.Key == "Sauce" ? item.Value : item.Key;
+
+                    if (int.TryParse( findIngridientID, out int ingridientId ))
                     {
-                        PizzaIngridientsViewModel model = new PizzaIngridientsViewModel();
-                        model.PizzaIngridientListId = count + 1;
-                        model.IngridientId = item.heldItem.Id;
-                        _context.PizzaIngridients.Add(model);
+                        model.IngridientId = ingridientId;
                     }
+                    else
+                    {
+                        SetErrorMessage( $"Couldn't find selected ingridient with ID - {findIngridientID}" );
+                        return RedirectToAction( nameof( Index ) );
+                    }
+
+                    _context.PizzaIngridients.Add( model );
                 }
+
                 _context.SaveChanges();
 
-                TempData["message"] = "Succesfully created new Ingridient List!";
-                return RedirectToAction(nameof(Index));
+                TempData[ "message" ] = "Succesfully created new Ingridient List!";
+                return RedirectToAction( nameof( Index ) );
             }
             else
             {
-                return RedirectToAction("Login", "Home");
+                return RedirectToAction( "Login", "Home" );
             }
-            
+
         }
-    
-        public IActionResult Details()
+
+        public IActionResult Details( )
         {
             if (IsAdmin())
             {
@@ -118,19 +126,19 @@ namespace Pizza2.Controllers
                     IngridientListDetailsModel model = new IngridientListDetailsModel();
                     model.IngridientInListId = item.ingridientListId;
                     model.IngridientName = item.ingridientName;
-                    ingridients.Add(model);
+                    ingridients.Add( model );
                 }
 
-                return View(ingridients);
+                return View( ingridients );
             }
             else
             {
-                return RedirectToAction("Login", "Home");
+                return RedirectToAction( "Login", "Home" );
             }
-            
+
         }
 
-        public IActionResult Delete()
+        public IActionResult Delete( )
         {
             if (IsAdmin())
             {
@@ -149,16 +157,16 @@ namespace Pizza2.Controllers
                     IngridientListDetailsModel model = new IngridientListDetailsModel();
                     model.IngridientInListId = item.ingridientListId;
                     model.IngridientName = item.ingridientName;
-                    ingridients.Add(model);
+                    ingridients.Add( model );
                 }
 
-                return View(ingridients);
+                return View( ingridients );
             }
             else
             {
-                return RedirectToAction("Login", "Home");
+                return RedirectToAction( "Login", "Home" );
             }
-            
+
         }
 
         public IActionResult DeleteIngridientsList(List<IngridientListDetailsModel> ingridients)
@@ -171,8 +179,8 @@ namespace Pizza2.Controllers
                     if (listId != item.IngridientInListId)
                     {
                         listId = item.IngridientInListId;
-                        var pizzaIngridientsList = _context.PizzaIngridients.FromSqlInterpolated($"Select * from dbo.PizzaIngridients where PizzaIngridientListId = {listId}").ToList();
-                        _context.PizzaIngridients.RemoveRange(pizzaIngridientsList);
+                        var pizzaIngridientsList = _context.PizzaIngridients.FromSqlInterpolated( $"Select * from dbo.PizzaIngridients where PizzaIngridientListId = {listId}" ).ToList();
+                        _context.PizzaIngridients.RemoveRange( pizzaIngridientsList );
                     }
                     else
                     {
@@ -182,14 +190,14 @@ namespace Pizza2.Controllers
 
                 _context.SaveChanges();
 
-                TempData["message"] = "Succesfully created new Menu!";
-                return RedirectToAction(nameof(Index));
+                TempData[ "message" ] = "Succesfully created new Menu!";
+                return RedirectToAction( nameof( Index ) );
             }
             else
             {
-                return RedirectToAction("Login", "Home");
+                return RedirectToAction( "Login", "Home" );
             }
-            
+
         }
     }
 }

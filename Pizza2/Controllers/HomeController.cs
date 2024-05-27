@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Session;
+using Microsoft.EntityFrameworkCore;
 using Pizza2.Data;
 using Pizza2.Models;
 using System.Diagnostics;
@@ -25,6 +26,8 @@ namespace Pizza2.Controllers
             List<UserViewModel> matchUser;
             if(!String.IsNullOrWhiteSpace(user.UserName) && !String.IsNullOrWhiteSpace(user.Password))
             {
+                string a =_context.Database.GetConnectionString();
+                bool b = _context.Database.CanConnect();
                 matchUser = _context.User.Where(u => u.Password == user.Password && u.UserName == user.UserName).Select(u => u).ToList();
 
                 if(matchUser.Count() < 1)
@@ -181,7 +184,7 @@ namespace Pizza2.Controllers
                 {
                     //Get selected pizzas and fill needed variables
                     List<PizzaViewModel> selectedPizzas = new List<PizzaViewModel>();
-                    float totalPrice = 0;
+                    float? totalPrice = 0;
                     string orderMakerName = GetSessionUsername();
                     foreach (var item in model)
                     {

@@ -12,12 +12,27 @@
             </div>
         </div>
         
+        <div class="row">
+            <div class="col form-check form-check-inline">
+                <p class="form-label mb-3"> Automaticly calculate pizza price? </p>
+
+                <div class="form-check form-check-inline">
+                    <input asp-for=itemTwo class="form-check-input auto-price" type="radio" id="inlineCheckbox" value="1">
+                    <label class="form-check-label" for="inlineCheckbox1">Yes</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input asp-for=itemTwo class="form-check-input auto-price" type="radio" id="inlineCheckbox" value="0">
+                    <label class="form-check-label" for="inlineCheckbox2">No</label>
+                </div>
+            </div>
+        </div>
+
         <div class="row my-3">
             <span class="col-12">Pizza Price</span>
             <div class="input-group align-bottom">
-                <input asp-for=itemTwoList type="number" class="form-control" placeholder="19" required/>
+                <input asp-for=itemTwoList type="number" class="form-control set-price" placeholder="19" required />
                 <span class="align-text-bottom mt-auto">.</span>
-                <input asp-for=itemTwoList type="number" class="form-control" placeholder="99" required/>
+                <input asp-for=itemTwoList type="number" class="form-control set-price" placeholder="99" required />
                 <span class="px-1 align-text-bottom mt-auto">pln</span>
             </div>
         </div>
@@ -29,7 +44,7 @@
                     @{
                         foreach (var id in Model.itemTwoList)
                         {
-                            <option value="@id">@id</option>
+                                                <option value="@id">@id</option>
                         }
                     }
                 </select>
@@ -42,3 +57,23 @@
 
     </form>
 </div>
+
+<script>
+    //Disable inputs used for setting price if Automatic Price option is selected
+    var radioButtons = document.getElementsByClassName("auto-price");
+    var priceInputs = document.getElementsByClassName("set-price");
+
+    for (radio in radioButtons) {
+        radioButtons[radio].onclick = function () {
+            if (this.value == 1) {
+                for (priceInput in priceInputs) {
+                    priceInputs[priceInput].disabled = true;
+                }
+            } else {
+                for (priceInput in priceInputs) {
+                    priceInputs[priceInput].disabled = false;
+                }
+            }
+        }
+    }
+</script>

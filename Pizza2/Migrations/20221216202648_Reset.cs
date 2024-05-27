@@ -9,7 +9,7 @@ namespace Pizza2.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            /*
+
             migrationBuilder.CreateTable(
                 name: "Ingridients",
                 columns: table => new
@@ -71,7 +71,7 @@ namespace Pizza2.Migrations
                     table.PrimaryKey("PK_Orders", x => x.Id);
                 });
 
-            */
+
 
             migrationBuilder.CreateTable(
                 name: "OrdersHistory",
@@ -90,7 +90,7 @@ namespace Pizza2.Migrations
                     table.PrimaryKey("PK_OrdersHistory", x => x.Id);
                 });
 
-            /*
+
             migrationBuilder.CreateTable(
                 name: "PizzaIngridients",
                 columns: table => new
@@ -134,7 +134,7 @@ namespace Pizza2.Migrations
                 {
                     table.PrimaryKey("PK_User", x => x.Id);
                 });
-            */
+
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

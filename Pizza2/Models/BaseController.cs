@@ -74,5 +74,15 @@ namespace Pizza2.Models
                 return false;
             }
         }
+
+        public void SetMessage(string message)
+        {
+            TempData[ "message" ] = message;
+        }
+
+        public void SetErrorMessage(string message)
+        {
+            TempData[ "error" ] = message;
+        }
     }
 }

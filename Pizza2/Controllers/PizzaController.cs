@@ -51,23 +51,27 @@ namespace Pizza2.Controllers
             {
                 PizzaViewModel pizza = model.itemOne;
                 float price = 0;
-                if (model.itemTwoList.Count() == 2)
+                if (model.itemTwo == 0 && model.itemTwoList.Count() == 2)
                 {
-                    if (model.itemTwoList[0] > 0 && model.itemTwoList[0] > 0)
+                    if (model.itemTwoList[ 0 ] > 0 && model.itemTwoList[ 0 ] > 0)
                     {
-                        price = float.Parse($"{model.itemTwoList[0]},{model.itemTwoList[1]}");
+                        price = float.Parse( $"{model.itemTwoList[ 0 ]},{model.itemTwoList[ 1 ]}" );
                     }
-                    else if (model.itemTwoList[0] > 0 && model.itemTwoList[1] == 0)
+                    else if (model.itemTwoList[ 0 ] > 0 && model.itemTwoList[ 1 ] == 0)
                     {
-                        price = float.Parse($"{model.itemTwoList[0]},00");
+                        price = float.Parse( $"{model.itemTwoList[ 0 ]},00" );
                     }
-                    else if (model.itemTwoList[0] == 0 && model.itemTwoList[1] > 0)
+                    else if (model.itemTwoList[ 0 ] == 0 && model.itemTwoList[ 1 ] > 0)
                     {
-                        price = float.Parse($"0,{model.itemTwoList[1]}");
+                        price = float.Parse( $"0,{model.itemTwoList[ 1 ]}" );
                     }
 
                     pizza.PizzaPrice = price;
                 }
+                else
+                    pizza.PizzaPrice = null;
+
+                pizza.IsCustomPizza = false;
 
                 _context.Pizzas.Add(pizza);
                 _context.SaveChanges();

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore.Diagnostics;
+using System.ComponentModel.DataAnnotations;
 
 namespace Pizza2.Models
 {
@@ -6,9 +7,10 @@ namespace Pizza2.Models
     {
         [Key]
         public int Id { get; set; }
-        public int DisplayPriority { get; set; }
         public string IngridientName { get; set; }  
         public float IngridientPrice { get; set; }
+        public int DisplayPriority { get; set; }
+        public int ImagePriority { get; set; }
         public bool ContainsMeat { get; set; }   
         
         public IngridientViewModel()

@@ -11,7 +11,8 @@
             <th scope="col"> <h4>Name</h4> </th>
             <th scope="col"> <h4>Price</h4> </th>
             <th scope="col"> <h4>Display priority</h4> </th>
-            <th scope="col"> <h4>Contains Meat</h4> </th>
+            <th scope="col"> <h4>Price</h4> </th>
+            <th scope="col"> <h4>Image Display Priority</h4> </th>
         </tr>
 
         @foreach(var item in Model){
@@ -20,6 +21,7 @@
                 <td>@item.IngridientName</td>
                 <td>@item.IngridientPrice pln</td>
                 <td>@item.DisplayPriority</td>
+                <td>@item.ImagePriority</td>
                 <td>
                 @if(item.ContainsMeat == true){
                     <b class="text-danger">Yes</b>

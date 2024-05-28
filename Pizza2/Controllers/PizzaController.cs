@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Pizza2.Data;
 using Pizza2.Models;
+using System.Collections.Generic;
 
 namespace Pizza2.Controllers
 {
@@ -29,12 +30,20 @@ namespace Pizza2.Controllers
         {
             if (IsAdmin())
             {
-                AddMultipleModel<PizzaViewModel, int> model = new AddMultipleModel<PizzaViewModel, int>();
+                AddMultipleModel<PizzaViewModel, Dictionary<int,string>> model = new AddMultipleModel<PizzaViewModel, Dictionary<int, string>>();
 
                 //Get uniqe values for ingridientListId
-                var result = _context.PizzaIngridients.Select(p => p.PizzaIngridientListId).Distinct().ToList();
+                var result = _context.PizzaIngridients
+                    .Select( pi => new { pi.PizzaIngridientListId, pi.IngridientListName } )
+                    .Distinct()
+                    .ToList();
 
-                model.itemTwoList = result;
+                model.itemTwo = new Dictionary<int, string>();
+
+                foreach(var pi in result)
+                {
+                    model.itemTwo.Add( pi.PizzaIngridientListId, pi.IngridientListName );
+                }
 
                 return View(model);
             }
@@ -45,28 +54,14 @@ namespace Pizza2.Controllers
             
         }
 
-        public IActionResult CreatePizza(AddMultipleModel<PizzaViewModel, int> model)
+        public IActionResult CreatePizza(AddMultipleModel<PizzaViewModel, string> model)
         {
             if (IsAdmin())
             {
                 PizzaViewModel pizza = model.itemOne;
-                float price = 0;
-                if (model.itemTwo == 0 && model.itemTwoList.Count() == 2)
+                if (float.TryParse( model.itemTwo?.Replace( ".", "," ), out float itemPrice ))
                 {
-                    if (model.itemTwoList[ 0 ] > 0 && model.itemTwoList[ 0 ] > 0)
-                    {
-                        price = float.Parse( $"{model.itemTwoList[ 0 ]},{model.itemTwoList[ 1 ]}" );
-                    }
-                    else if (model.itemTwoList[ 0 ] > 0 && model.itemTwoList[ 1 ] == 0)
-                    {
-                        price = float.Parse( $"{model.itemTwoList[ 0 ]},00" );
-                    }
-                    else if (model.itemTwoList[ 0 ] == 0 && model.itemTwoList[ 1 ] > 0)
-                    {
-                        price = float.Parse( $"0,{model.itemTwoList[ 1 ]}" );
-                    }
-
-                    pizza.PizzaPrice = price;
+                    pizza.PizzaPrice = itemPrice;
                 }
                 else
                     pizza.PizzaPrice = null;
@@ -93,14 +88,15 @@ namespace Pizza2.Controllers
                 //Initiate List Holder
                 List<ItemListHolderModel<PizzaViewModel, string>> model = new List<ItemListHolderModel<PizzaViewModel, string>>();
 
-                //Get pizzas (ItemA)
-                var pizzas = _context.Pizzas.Select(d => d).ToList();
+                List<PizzaViewModel> pizzas = _context.Pizzas.Where(p => p.IsCustomPizza == false).ToList();
 
-                foreach (var item in pizzas)
+                foreach(PizzaViewModel pizza in pizzas)
                 {
-                    ItemListHolderModel<PizzaViewModel, string> pizza = new ItemListHolderModel<PizzaViewModel, string>();
-                    pizza.ItemsB = new List<string>();
-                    pizza.ItemA = item;
+                    ItemListHolderModel<PizzaViewModel, string> pizzaData = new ItemListHolderModel<PizzaViewModel, string>();
+                    pizzaData.ItemsB = new List<string>();
+                    pizzaData.ItemA = pizza;
+
+                    float automaticPrice = 0f;
 
                     //Get list of ingridnets names for target pizza and fill our model with it
                     var query = from list in _context.PizzaIngridients
@@ -109,18 +105,34 @@ namespace Pizza2.Controllers
                                 select new
                                 {
                                     ingridientListId = list.PizzaIngridientListId,
-                                    ingridientName = i.IngridientName
+                                    ingridientListName = list.IngridientListName,
+                                    ingridientName = i.IngridientName,
+                                    ingridientPrice = i.IngridientPrice
                                 };
-
+                    
                     foreach (var ingridient in query)
                     {
-                        if (ingridient.ingridientListId == pizza.ItemA.IngridientsListId)
+                        if (ingridient.ingridientListId == pizza.IngridientsListId)
                         {
-                            pizza.ItemsB.Add(ingridient.ingridientName);
+                            pizzaData.ItemsB.Add( ingridient.ingridientName );
+
+                            if (pizza.PizzaPrice == null)
+                                automaticPrice += ingridient.ingridientPrice;
                         }
                     }
 
-                    model.Add(pizza);
+                    foreach(var ingridient in query)
+                    {
+                        if (ingridient.ingridientListId == pizza.IngridientsListId)
+                        {
+                            pizzaData.ItemB = $"{ingridient.ingridientListId} - {ingridient.ingridientListName}";
+                            break;
+                        }
+                    }
+
+                    if (automaticPrice != 0f)
+                        pizzaData.customData = $"{automaticPrice}";
+                    model.Add( pizzaData );
                 }
 
                 return View(model);
@@ -190,7 +202,7 @@ namespace Pizza2.Controllers
                     _context.SaveChanges();
                 }
 
-                TempData["message"] = "Succesfully added new Pizza!";
+                SetMessage( "Successfully deleted pizza" );
                 return RedirectToAction(nameof(Index));
             }
             else

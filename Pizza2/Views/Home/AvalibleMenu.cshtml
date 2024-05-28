@@ -1,4 +1,4 @@
-﻿@model List<ItemListHolderModel<PizzaViewModel, string>>
+﻿@model List<ItemListHolderModel<PizzaViewModel, IngridientViewModel>>
 
 @{
     //Layout is avalible fo displaying shared views
@@ -30,57 +30,77 @@
 </div>
 
 
-<div class="container">
+<div class="container menu-container">
     <div class="row text-center">
 
+        <div class="row">
+            <div class="col-12 pizza-container-header text-center text-special" id="pizza-header-container">
+                <span>Create your own custom pizza!</span>
+            </div>
+
+            <div class="col-9">
+                !!! Put ingridients here !!!
+            </div>
+
+            <div class="col-3">
+                <button id="add-custom-pizza-btn">Add my pizza to the cart</button>
+            </div>
+        </div>
+
         @foreach(var item in Model){
-            <div class="card col-7 col-lg-3 mb-3 text-black">
+            <div class="row pizza-container">
 
-                <div class="card-header picture-container" id="menu-picture">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <img src="~/images/AvalibleMenu/Pizza.png" class="img-fluid" alt="Responsive image">
-                        </div>
-                    </div>
+                <div class="col-12 pizza-container-header text-center text-special" id="pizza-header-container">
+                    <span>@item.ItemA.PizzaName</span>
                 </div>
 
-                <div class="card-body">
-                    <h4> <b>@item.ItemA.PizzaName</b> </h4>
+                <div class="col-5 pizza-image" id="pizza-img-container" name="pizza-image-container">
+                    @for (int i = 0; i < item.ItemsB.Count(); i++)
+                    {
+                        <img src="@Url.Content($"~/images/Ingridients/{item.ItemsB[i].IngridientName}.png")"
+                             class="img-fluid rounded-top"
+                             id="img1"
+                             style="z-index: @item.ItemsB[i].ImagePriority;"
+                             alt="" />
+                    }
+                    @* <img src="~/images/AvalibleMenu/Pizza.png" class="img-fluid" alt="Responsive image"> *@
                 </div>
 
-                <div class="card-body bg-light text-black">
-                    @for(int i = 0; i < item.ItemsB.Count(); i++){
-                        if(i + 1 == item.ItemsB.Count()){
-                            <span>@item.ItemsB[i]</span>
-                        } else {
-                            <span>@item.ItemsB[i], </span>
+                <div class="col-4 pizza-ingridients">
+                    @for (int i = 0; i < item.ItemsB.Count(); i++)
+                    {
+                        if (i + 1 == item.ItemsB.Count())
+                        {
+                            <span>@item.ItemsB[ i ].IngridientName</span>
+                        }
+                        else
+                        {
+                            <span>@item.ItemsB[ i ].IngridientName, </span>
                         }
                     }
                 </div>
 
-                <div class="card-body bg-light">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <b> <i> <span>@item.ItemA.PizzaPrice</span> </i> </b>
+                <div class="col-3 pizza-buttons">
+                    <div class="row">
+                        <div class="col-12">
+                            <span>@item.ItemA.PizzaPrice PLN</span>
                         </div>
-                    </div>
-                </div>
-
-                <div class="card-footer" id="menu-picture">
-                    <div name="data-container">
-                        <input type="number" value="@item.ItemA.Id" id="data" hidden>
-                        <input type="text" value="@item.ItemA.PizzaName" id="data-name" hidden>
-                        <button class="btn btn-primary" id="add-to-cart-btn">Add to cart!</button>
+                        <div class="col-12" name="data-container">
+                            <input type="number" value="@item.ItemA.Id" id="data" hidden>
+                            <input type="text" value="@item.ItemA.PizzaName" id="data-name" hidden>
+                            <button class="btn btn-primary" id="add-to-cart-btn">Add to cart!</button>
+                        </div>
                     </div>
                     
                 </div>
+
             </div>
         }
     </div>
 </div>
 
 <script type="text/javascript" defer>
-    
+    //----------- BEGIN Shopcart_Script -----------
     var cartContainer = document.getElementById("cart-container");
     var dataContainer = document.getElementsByName("data-container");
     var orderCount = document.getElementById("order-count");
@@ -109,13 +129,49 @@
                 title: "Success",
                 text: `Succesfully added ${name} to the cart!`
             });
-
             
             //Refresh order count
             orderCount.innerHTML = `${cartSizeCount} - `;
         });
     });
-
+    //----------- END Shopcart_Script -----------
     
+    //----------- BEGIN Pizza_Creation -----------
+    let imageContainer = document.getElementsByName("pizza-image-container");
 
+    let leftPosition = 0;
+    let topPosition = 0;
+    let zPosition = 1;
+
+    console.log("images count: " + imageContainer.length);
+
+    if (document.readyState) {
+        imageContainer.forEach(container => {
+            let containerRect = container.getBoundingClientRect();
+            let containerHeight = containerRect.bottom - containerRect.top;
+            console.log("imageContainer.style.left: " + containerRect.left);
+
+            let images = container.querySelectorAll("img");
+
+            images.forEach(image => {
+                if (zPosition == 1) {
+                    var imageRect = image.getBoundingClientRect();
+                    console.log("imageRect.left: " + imageRect.left);
+
+                    leftPosition = containerRect.left;
+                    topPosition = containerRect.top;
+                    image.style = `height:${containerHeight}px;`;
+
+                    image.style = `position:absolute; left:${leftPosition}; top:${topPosition}; height:${containerHeight}px;`;
+                    image.style.zIndex = zPosition;
+                } else {
+                    image.style = `position:absolute; left:${leftPosition}; top:${topPosition}; height:${containerHeight}px;`;
+                    image.style.zIndex = zPosition;
+                }
+                console.log("Image: " + zPosition);
+                zPosition++;
+            });
+        });
+    }
+    //----------- END Pizza_Creation -----------
 </script>

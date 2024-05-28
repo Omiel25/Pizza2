@@ -1,4 +1,4 @@
-﻿@model AddMultipleModel<PizzaViewModel, int>
+﻿@model AddMultipleModel<PizzaViewModel, Dictionary<int,string>>
 
 <h1>Create Pizza</h1>
 
@@ -17,11 +17,11 @@
                 <p class="form-label mb-3"> Automaticly calculate pizza price? </p>
 
                 <div class="form-check form-check-inline">
-                    <input asp-for=itemTwo class="form-check-input auto-price" type="radio" id="inlineCheckbox" value="1">
+                    <input class="form-check-input auto-price" name="inlineCheckbox" type="radio" id="inlineCheckbox" value="1">
                     <label class="form-check-label" for="inlineCheckbox1">Yes</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input asp-for=itemTwo class="form-check-input auto-price" type="radio" id="inlineCheckbox" value="0">
+                    <input class="form-check-input auto-price" name="inlineCheckbox" type="radio" id="inlineCheckbox" value="0">
                     <label class="form-check-label" for="inlineCheckbox2">No</label>
                 </div>
             </div>
@@ -30,10 +30,7 @@
         <div class="row my-3">
             <span class="col-12">Pizza Price</span>
             <div class="input-group align-bottom">
-                <input asp-for=itemTwoList type="number" class="form-control set-price" placeholder="19" required />
-                <span class="align-text-bottom mt-auto">.</span>
-                <input asp-for=itemTwoList type="number" class="form-control set-price" placeholder="99" required />
-                <span class="px-1 align-text-bottom mt-auto">pln</span>
+                <input asp-for=itemTwo type="number" class="form-control" id="set-price" min="0" step="0.01" placeholder="19.99" />
             </div>
         </div>
 
@@ -42,9 +39,9 @@
                 <label class="form-label mb-3 my-3">Pizza Ingridients list ID</label>
                 <select asp-for=itemOne.IngridientsListId class="form-select">
                     @{
-                        foreach (var id in Model.itemTwoList)
+                        foreach (var ingridients in Model.itemTwo)
                         {
-                                                <option value="@id">@id</option>
+                            <option value="@ingridients.Key">@ingridients.Key - @ingridients.Value</option>
                         }
                     }
                 </select>
@@ -61,18 +58,19 @@
 <script>
     //Disable inputs used for setting price if Automatic Price option is selected
     var radioButtons = document.getElementsByClassName("auto-price");
-    var priceInputs = document.getElementsByClassName("set-price");
+    var priceInput = document.getElementById("set-price");
 
     for (radio in radioButtons) {
         radioButtons[radio].onclick = function () {
-            if (this.value == 1) {
-                for (priceInput in priceInputs) {
-                    priceInputs[priceInput].disabled = true;
-                }
-            } else {
-                for (priceInput in priceInputs) {
-                    priceInputs[priceInput].disabled = false;
-                }
+            console.log('Function firing');
+            if (this.value == 1) 
+            {
+                console.log('Field off');
+                priceInput.disabled = true;
+            } else 
+            {
+                console.log('Field on');
+                priceInput.disabled = false;
             }
         }
     }

@@ -65,19 +65,30 @@ namespace Pizza2.Controllers
         {
             if (IsAdmin())
             {
+                if(!collection.ContainsKey( "ingridientListName" ))
+                {
+                    SetErrorMessage( $"Fill out 'Ingridient List Name' field" );
+                    return RedirectToAction( nameof( Index ) );
+                }
+
+                string ingridientListName = collection[ "ingridientListName" ];
+
                 //Fill empty field "heldItem" from models to match selected ingridients
                 var ingridients = _context.Ingridients.ToList();
-
+                
                 ////Get Max ID value to select ID for next Ingridient List
                 int result = _context.PizzaIngridients.Max( p => (int?)p.PizzaIngridientListId ) ?? 0;
                 result++;
 
                 foreach(var item in collection)
                 {
-                    if (item.Key == "__RequestVerificationToken")
+                    if (item.Key == "__RequestVerificationToken" || item.Key == "ingridientListName")
                         continue;
 
-                    PizzaIngridientsViewModel model = new PizzaIngridientsViewModel() { PizzaIngridientListId = result };
+                    PizzaIngridientsViewModel model = new PizzaIngridientsViewModel() { 
+                        PizzaIngridientListId = result, 
+                        IngridientListName = ingridientListName 
+                    };
                     string findIngridientID = item.Key == "Sauce" ? item.Value : item.Key;
 
                     if (int.TryParse( findIngridientID, out int ingridientId ))
@@ -116,6 +127,7 @@ namespace Pizza2.Controllers
                             select new
                             {
                                 ingridientListId = list.PizzaIngridientListId,
+                                ingridientListName = list.IngridientListName,
                                 ingridientName = i.IngridientName
                             };
 
@@ -126,6 +138,7 @@ namespace Pizza2.Controllers
                     IngridientListDetailsModel model = new IngridientListDetailsModel();
                     model.IngridientInListId = item.ingridientListId;
                     model.IngridientName = item.ingridientName;
+                    model.IngridientListName = item.ingridientListName;
                     ingridients.Add( model );
                 }
 

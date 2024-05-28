@@ -14,5 +14,7 @@ namespace Pizza2.Models
 
         [ForeignKey("PizzaIngridientListId")]
         public int PizzaIngridientListId { get; set; }
+
+        public string IngridientListName { get; set; }
     }
 }

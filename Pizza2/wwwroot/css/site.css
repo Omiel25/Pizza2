@@ -154,3 +154,18 @@ div h1{
     font-family: 'Rubik', sans-serif;
     border-radius: 1vw 1vw 0 0;
 }
+
+#pizza-img-container {
+    position: relative;
+    height: 200px;
+}
+
+menu-container img {
+    position: relative;
+    left: 0;
+    top: 0;
+}
+
+#pizza-header-container{
+
+}

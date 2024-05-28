@@ -93,12 +93,12 @@ namespace Pizza2.Controllers
             return View();
         }
 
-        public IActionResult AvalibleMenu( )
+        public IActionResult AvalibleMenu( List<int>? customPizzaIds )
         {
             //Need to change it- get both pizzas AND Ingridients names (Maybe make new model, idk)
             if (IsWorker() || IsUser())
             {
-                List<ItemListHolderModel<PizzaViewModel, string>> model = new List<ItemListHolderModel<PizzaViewModel, string>>();
+                List<ItemListHolderModel<PizzaViewModel, IngridientViewModel>> model = new List<ItemListHolderModel<PizzaViewModel, IngridientViewModel>>();
 
                 //Get pizzas from active menu (ItemA)
                 var pizzas = from menu in _context.Menu
@@ -112,8 +112,8 @@ namespace Pizza2.Controllers
                 foreach (var pizza in pizzas)
                 {
                     //Item containing <Pizza, ingridients names>
-                    ItemListHolderModel<PizzaViewModel, string> pizzaHolder = new ItemListHolderModel<PizzaViewModel, string>();
-                    pizzaHolder.ItemsB = new List<string>();
+                    ItemListHolderModel<PizzaViewModel, IngridientViewModel> pizzaHolder = new ItemListHolderModel<PizzaViewModel, IngridientViewModel>();
+                    pizzaHolder.ItemsB = new List<IngridientViewModel>();
                     pizzaHolder.ItemA = pizza;
 
                     //Get list of ingridnets names for target pizza and fill our model with it
@@ -128,9 +128,16 @@ namespace Pizza2.Controllers
                                     ingridientPrice = i.IngridientPrice
                                 };
 
-                    pizzaHolder.ItemsB = query.Where( pi => pi.ingridientListId == pizza.IngridientsListId )
-                        .Select( pi => pi.ingridientName )
-                        .ToList();
+                    //pizzaHolder.ItemsB = query.Where( pi => pi.ingridientListId == pizza.IngridientsListId )
+                    //    .Select()
+                    //    .ToList();
+                    List<int> pizzaIngridientIds = _context.PizzaIngridients
+                        .Where( pi => pi.PizzaIngridientListId == pizza.IngridientsListId )
+                        .Select(pi => pi.IngridientId)
+                        .ToList( );
+
+                    pizzaHolder.ItemsB = ingridientList.Where(i => pizzaIngridientIds.Contains(i.Id)).ToList( );
+
 
                     if (pizzaHolder.ItemA.PizzaPrice == null)
                     {

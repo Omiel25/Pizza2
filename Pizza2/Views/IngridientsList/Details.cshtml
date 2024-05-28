@@ -8,6 +8,7 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">List ID</th>
+                <th scope="col">List Name</th>
                 <th scope="col">Ingridients</th>
             </tr>
             @{
@@ -21,6 +22,7 @@
                             <tr>
                                 <td>@count</td>
                                 <td>@item.IngridientInListId</td>
+                                <td>@item.IngridientListName</td>
                                 <td>
                                 @{
                                 foreach(var ingridient in Model){

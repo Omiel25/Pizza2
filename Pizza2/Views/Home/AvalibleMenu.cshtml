@@ -1,13 +1,29 @@
-﻿@model List<ItemListHolderModel<PizzaViewModel, IngridientViewModel>>
+﻿@model AvalibleMenuModel
 
 @{
     //Layout is avalible fo displaying shared views
-    if((int)TempData["privilages"] == 1){
+    if ((int)TempData[ "privilages" ] == 1)
+    {
         Layout = "~/Views/Shared/_WorkerLayout.cshtml";
-    } else {
+    }
+    else
+    {
         Layout = "~/Views/Shared/Logo.cshtml";
     }
-    
+    List<IngridientViewModel> sauces = Model.Ingridients
+        .Where( p => p.IngridientName.Contains( "Sauce", StringComparison.OrdinalIgnoreCase ) )
+        .ToList();
+    List<IngridientViewModel> pies = Model.Ingridients
+        .Where( p =>
+            p.IngridientName.Contains( "Pie", StringComparison.OrdinalIgnoreCase ) &&
+            p.IngridientName != "Pizza Pie" )
+        .ToList();
+    List<IngridientViewModel> classicIngridients = Model.Ingridients
+        .Where( p =>
+            !p.IngridientName.Contains( "Pie", StringComparison.OrdinalIgnoreCase ) &&
+            !p.IngridientName.Contains( "Sauce", StringComparison.OrdinalIgnoreCase )
+        ).ToList();
+    int pizzaCount = 0;
 }
 
 <div class="text-center container">
@@ -18,8 +34,8 @@
             <!--Place for pizzas added via JS QQ-->
         </div>
         <span id="order-count"> 0 </span>
-        <button type="submit" class="icon-container"> 
-            <img id="shopping-cart-icon" src="~/images/ShoppingCart.png"/>
+        <button type="submit" class="icon-container">
+            <img id="shopping-cart-icon" src="~/images/ShoppingCart.png" />
         </button>
     </form>
 </div>
@@ -33,49 +49,134 @@
 <div class="container menu-container">
     <div class="row text-center">
 
-        <div class="row">
+        <div class="row my-4">
             <div class="col-12 pizza-container-header text-center text-special" id="pizza-header-container">
-                <span>Create your own custom pizza!</span>
+                <h4>Create your own custom pizza!</h4>
             </div>
 
-            <div class="col-9">
-                !!! Put ingridients here !!!
+            <div class="col-4" id="custom-pizza-images">
+                @for (int i = 0; i < Model.Ingridients.Count(); i++)
+                {
+                    string ingridientName = Model.Ingridients[ i ].IngridientName;
+                    @if (ingridientName == "Pizza Pie")
+                    {
+                        <img src="@Url.Content($"~/images/Ingridients/{ingridientName}.png")"
+                             class="img-fluid rounded-top"
+                             id="@ingridientName"
+                             alt="" />
+                    }
+                    else
+                    {
+                        <img src="@Url.Content($"~/images/Ingridients/{ingridientName}.png")"
+                             class="img-fluid rounded-top pizza-ingridient-image"
+                             id="@ingridientName"
+                             alt="" />
+                    }
+
+                }
             </div>
 
-            <div class="col-3">
-                <button id="add-custom-pizza-btn">Add my pizza to the cart</button>
+            <div class="col-5" id="custom-pizza-ingridients">
+                <div class="row py-1">
+                    @{
+                        int saucesNumber = sauces.Count();
+                                                    @if (saucesNumber > 0)
+                        {
+                            foreach (var sauce in sauces)
+                            {
+                                <div class="col">
+                                    <label class="form-check-label" for="Sauce">
+                                        @sauce.IngridientName
+                                        <input type="radio" name="Sauce" value="@sauce.Id" id="@sauce.IngridientName" class="form-check-input">
+                                    </label>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+
+                <div class="row py-1">
+                    <div class="col">
+                        <label class="form-check-label" for="Pie">
+                            Classic Pizza Pie
+                            <input type="radio" name="Pie" value="classic" id="Pizza Pie" class="form-check-input" checked>
+                        </label>
+                    </div>
+                    @{
+                        int pieNumber = sauces.Count();
+                                                    @if (pieNumber > 0)
+                        {
+                            foreach (var pie in pies)
+                            {
+                                                            <div class="col">
+                                                                <label class="form-check-label" for="Pie">
+                                                                    @pie.IngridientName
+                                                                    <input type="radio" name="Pie" value="@pie.Id" id="@pie.IngridientName" class="form-check-input">
+                                                                </label>
+                                                            </div>
+                            }
+                        }
+                    }
+                </div>
+
+                <div class="row py-1">
+                    @{
+                        int ingridientNumber = classicIngridients.Count();
+                                                    @if (ingridientNumber > 0)
+                        {
+                            foreach (var ingridient in classicIngridients)
+                            {
+                                                            <div class="col-4">
+                                                                <label class="form-check-label" for="Pie">
+                                                                    @ingridient.IngridientName
+                                                                    <input type="checkbox" name="@ingridient.IngridientName" value="@ingridient.Id" id="@ingridient.IngridientName" class="form-check-input">
+                                                                </label>
+                                                            </div>
+                            }
+                        }
+                    }
+                </div>
             </div>
+
+            <div class="col-2 my-3" id="custom-pizza-form-container">
+                <p>00.00 PLN</p>
+                <form asp-controller="Home" asp-action="AddCustomPizza" method="post" id="custom-pizza-container">
+                    <button id="add-custom-pizza-btn" class="btn btn-success">Add pizza to the cart</button>
+                </form>
+            </div>
+
+            <hr />
         </div>
-
-        @foreach(var item in Model){
+        @foreach (var pizzaHolder in Model.Pizzas)
+        {
             <div class="row pizza-container">
 
                 <div class="col-12 pizza-container-header text-center text-special" id="pizza-header-container">
-                    <span>@item.ItemA.PizzaName</span>
+                    <h4>@pizzaHolder.Pizza.PizzaName</h4>
                 </div>
 
                 <div class="col-5 pizza-image" id="pizza-img-container" name="pizza-image-container">
-                    @for (int i = 0; i < item.ItemsB.Count(); i++)
+                    @for (int i = 0; i < pizzaHolder.PizzaIngridients.Count(); i++)
                     {
-                        <img src="@Url.Content($"~/images/Ingridients/{item.ItemsB[i].IngridientName}.png")"
+                        <img src="@Url.Content($"~/images/Ingridients/{pizzaHolder.PizzaIngridients[i].IngridientName}.png")"
                              class="img-fluid rounded-top"
                              id="img1"
-                             style="z-index: @item.ItemsB[i].ImagePriority;"
+                             style="z-index: @pizzaHolder.PizzaIngridients[i].ImagePriority;"
                              alt="" />
                     }
                     @* <img src="~/images/AvalibleMenu/Pizza.png" class="img-fluid" alt="Responsive image"> *@
                 </div>
 
                 <div class="col-4 pizza-ingridients">
-                    @for (int i = 0; i < item.ItemsB.Count(); i++)
+                    @for (int i = 0; i < pizzaHolder.PizzaIngridients.Count(); i++)
                     {
-                        if (i + 1 == item.ItemsB.Count())
+                        if (i + 1 == pizzaHolder.PizzaIngridients.Count())
                         {
-                            <span>@item.ItemsB[ i ].IngridientName</span>
+                            <span>@pizzaHolder.PizzaIngridients[ i ].IngridientName</span>
                         }
                         else
                         {
-                            <span>@item.ItemsB[ i ].IngridientName, </span>
+                            <span>@pizzaHolder.PizzaIngridients[ i ].IngridientName, </span>
                         }
                     }
                 </div>
@@ -83,18 +184,23 @@
                 <div class="col-3 pizza-buttons">
                     <div class="row">
                         <div class="col-12">
-                            <span>@item.ItemA.PizzaPrice PLN</span>
+                            <span>@pizzaHolder.Pizza.PizzaPrice PLN</span>
                         </div>
                         <div class="col-12" name="data-container">
-                            <input type="number" value="@item.ItemA.Id" id="data" hidden>
-                            <input type="text" value="@item.ItemA.PizzaName" id="data-name" hidden>
+                            <input type="number" value="@pizzaHolder.Pizza.Id" id="data" hidden>
+                            <input type="text" value="@pizzaHolder.Pizza.PizzaName" id="data-name" hidden>
                             <button class="btn btn-primary" id="add-to-cart-btn">Add to cart!</button>
                         </div>
                     </div>
-                    
+
                 </div>
 
             </div>
+            pizzaCount++;
+            @if (pizzaCount != Model.Pizzas.Count())
+            {
+                <hr />
+            }
         }
     </div>
 </div>
@@ -120,7 +226,7 @@
             newInput = `<input type="number" name="Model[${cartSizeCount}].Id" value="${id}" id="data" hidden>`;
 
             cartContainer.innerHTML += newInput;
-            
+
             cartSizeCount++;
 
             //Show alert with success message
@@ -129,38 +235,34 @@
                 title: "Success",
                 text: `Succesfully added ${name} to the cart!`
             });
-            
+
             //Refresh order count
             orderCount.innerHTML = `${cartSizeCount} - `;
         });
     });
     //----------- END Shopcart_Script -----------
-    
-    //----------- BEGIN Pizza_Creation -----------
+
+    //----------- BEGIN Pizza_Img_Creation -----------
     let imageContainer = document.getElementsByName("pizza-image-container");
+    let customPizzaImagesContainer = document.querySelectorAll("#custom-pizza-images");
 
     let leftPosition = 0;
     let topPosition = 0;
     let zPosition = 1;
 
-    console.log("images count: " + imageContainer.length);
-
     if (document.readyState) {
         imageContainer.forEach(container => {
             let containerRect = container.getBoundingClientRect();
             let containerHeight = containerRect.bottom - containerRect.top;
-            console.log("imageContainer.style.left: " + containerRect.left);
 
             let images = container.querySelectorAll("img");
 
             images.forEach(image => {
                 if (zPosition == 1) {
                     var imageRect = image.getBoundingClientRect();
-                    console.log("imageRect.left: " + imageRect.left);
 
                     leftPosition = containerRect.left;
                     topPosition = containerRect.top;
-                    image.style = `height:${containerHeight}px;`;
 
                     image.style = `position:absolute; left:${leftPosition}; top:${topPosition}; height:${containerHeight}px;`;
                     image.style.zIndex = zPosition;
@@ -168,10 +270,84 @@
                     image.style = `position:absolute; left:${leftPosition}; top:${topPosition}; height:${containerHeight}px;`;
                     image.style.zIndex = zPosition;
                 }
-                console.log("Image: " + zPosition);
+                zPosition++;
+            });
+        });
+
+        customPizzaImagesContainer.forEach(container => {
+            let containerRect = container.parentElement.getBoundingClientRect();
+            let containerHeight = containerRect.bottom - containerRect.top;
+            let images = container.querySelectorAll("img");
+
+            images.forEach(image => {
+                if (zPosition == 1) {
+                    var imageRect = image.getBoundingClientRect();
+
+                    leftPosition = containerRect.left;
+                    topPosition = containerRect.top;
+
+                    image.style = `position:absolute; left:${leftPosition}; top:${topPosition}; height:${containerHeight}px;`;
+                    image.style.zIndex = zPosition;
+                } else {
+                    image.style = `position:absolute; left:${leftPosition}; top:${topPosition}; height:${containerHeight}px;`;
+                    image.style.zIndex = zPosition;
+                }
                 zPosition++;
             });
         });
     }
     //----------- END Pizza_Creation -----------
+</script>
+
+<script type="text/javascript" defer>
+    let customPizzaImages = document.querySelectorAll("#custom-pizza-images .pizza-ingridient-image");
+    console.log("Custom Pizza Images: " + customPizzaImages.length);
+
+    let customPizzaInputs = document.querySelectorAll("#custom-pizza-ingridients input");
+    console.log("Custom Pizza Inputs: " + customPizzaInputs.length);
+
+    let customPizzaForm = document.querySelector("#custom-pizza-form-container form");
+    console.log("Custom Pizza Form: " + customPizzaForm);
+
+    //Set all ingridients visibility to hidden
+    customPizzaImages.forEach(image => {
+        image.style.visibility = "hidden";
+    });
+
+    //Change images visibilities on input change
+    customPizzaInputs.forEach(input => {
+        input.addEventListener("click", (index) => {
+            let customPizzaInputID = input.id;
+            let customPizzaInputChecked = input.checked;
+
+            let skipLoop = false;
+            customPizzaImages.forEach(img => {
+                if (skipLoop == true) {
+                    return;
+                }
+
+                if (img.id == customPizzaInputID) {
+                    img.style.visibility = customPizzaInputChecked ? 'visible' : 'hidden';
+                    if (customPizzaInputID.includes("Sauce")) {
+                        //disable other sauces
+                        customPizzaImages.forEach(ingridientImage => {
+                            if (ingridientImage.id.includes("Sauce") && ingridientImage.id != img.id) {
+                                ingridientImage.style.visibility = "hidden";
+                            }
+                        });
+                    } 
+
+                    skipLoop = true;
+                }
+
+            });
+            
+        });
+    });
+    /*
+    1.Get ID of the input
+    2.Get img with the same id
+    3.Make img hidden/visible
+    */
+
 </script>

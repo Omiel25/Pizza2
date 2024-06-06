@@ -3,24 +3,26 @@
 
 <h2>Avalible Menus</h2>
 <div class="my-3">
-    <form asp-controller="Menu" asp-action="ActivateMenu" class="" method="post">
-        <select class="form-select" asp-for="@Model[0]">
-            @{
-                if (Model.Any())
-                {
-                    foreach (var menu in Model)
+    @{
+        if (Model.Count >= 1)
+        {
+            <form asp-controller="Menu" asp-action="ActivateMenu" class="" method="post">
+                <select class="form-select" asp-for="@Model[0]">
+                    @foreach (var menu in Model)
                     {
                         <option value="@menu">@menu</option>
                     }
-                }
-                else
-                {
                     <option value="_null_pizza_">-No menus avalible-</option>
-                }
-            }
-        </select>
+                </select>
 
-        <button type="submit" class="btn btn-success my-2">Activate</button>
-    </form>
+                <button type="submit" class="btn btn-success my-2">Activate</button>
+            </form>
+        }
+        else
+        {
+            <hr />
+            <h4>No menus created yet</h4>
+        }
+    }
 </div>
 

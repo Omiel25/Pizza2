@@ -155,7 +155,7 @@ div h1{
     border-radius: 1vw 1vw 0 0;
 }
 
-#pizza-img-container {
+#pizza-img-container, custom-pizza-images {
     position: relative;
     height: 200px;
 }
@@ -164,8 +164,4 @@ menu-container img {
     position: relative;
     left: 0;
     top: 0;
-}
-
-#pizza-header-container{
-
 }

@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Session;
-using Microsoft.EntityFrameworkCore;
 using Pizza2.Data;
 using Pizza2.Models;
 using System.Diagnostics;
@@ -26,8 +24,6 @@ namespace Pizza2.Controllers
             List<UserViewModel> matchUser;
             if (!String.IsNullOrWhiteSpace( user.UserName ) && !String.IsNullOrWhiteSpace( user.Password ))
             {
-                string a = _context.Database.GetConnectionString();
-                bool b = _context.Database.CanConnect();
                 matchUser = _context.User.Where( u => u.Password == user.Password && u.UserName == user.UserName ).Select( u => u ).ToList();
 
                 if (matchUser.Count() < 1)
@@ -95,11 +91,12 @@ namespace Pizza2.Controllers
 
         public IActionResult AvalibleMenu( List<int>? customPizzaIds )
         {
-            //Need to change it- get both pizzas AND Ingridients names (Maybe make new model, idk)
             if (IsWorker() || IsUser())
             {
-                List<ItemListHolderModel<PizzaViewModel, IngridientViewModel>> model = new List<ItemListHolderModel<PizzaViewModel, IngridientViewModel>>();
-
+                AvalibleMenuModel model = new AvalibleMenuModel();
+                model.Pizzas = new List<AvalibleMenuPizzasSubModel>();
+                model.ShopCartPizzasIds = new List<string>();
+                
                 //Get pizzas from active menu (ItemA)
                 var pizzas = from menu in _context.Menu
                              join p in _context.Pizzas
@@ -107,14 +104,15 @@ namespace Pizza2.Controllers
                              where menu.IsActive
                              select p;
 
-                List<IngridientViewModel> ingridientList = _context.Ingridients.ToList();
+                List<IngridientViewModel> ingridientList = _context.Ingridients.OrderBy( p => p.DisplayPriority ).ToList();
+                model.Ingridients = ingridientList;
 
                 foreach (var pizza in pizzas)
                 {
                     //Item containing <Pizza, ingridients names>
-                    ItemListHolderModel<PizzaViewModel, IngridientViewModel> pizzaHolder = new ItemListHolderModel<PizzaViewModel, IngridientViewModel>();
-                    pizzaHolder.ItemsB = new List<IngridientViewModel>();
-                    pizzaHolder.ItemA = pizza;
+                    AvalibleMenuPizzasSubModel pizzaHolder = new AvalibleMenuPizzasSubModel();
+                    pizzaHolder.PizzaIngridients = new List<IngridientViewModel>();
+                    pizzaHolder.Pizza = pizza;
 
                     //Get list of ingridnets names for target pizza and fill our model with it
                     var query = from list in _context.PizzaIngridients
@@ -136,10 +134,10 @@ namespace Pizza2.Controllers
                         .Select(pi => pi.IngridientId)
                         .ToList( );
 
-                    pizzaHolder.ItemsB = ingridientList.Where(i => pizzaIngridientIds.Contains(i.Id)).ToList( );
+                    pizzaHolder.PizzaIngridients = ingridientList.Where(i => pizzaIngridientIds.Contains(i.Id)).ToList( );
 
 
-                    if (pizzaHolder.ItemA.PizzaPrice == null)
+                    if (pizzaHolder.Pizza.PizzaPrice == null)
                     {
                         List<int> ingridientsID = query.Where( i => i.ingridientListId == pizza.IngridientsListId )
                             .Select( p => p.ingridientId ).ToList();
@@ -155,10 +153,10 @@ namespace Pizza2.Controllers
                             .Select( i => i.IngridientPrice )
                             .Sum();
 
-                        pizzaHolder.ItemA.PizzaPrice = pizzaPrice;
+                        pizzaHolder.Pizza.PizzaPrice = pizzaPrice;
                     }
 
-                    model.Add( pizzaHolder );
+                    model.Pizzas.Add( pizzaHolder );
                 }
 
 

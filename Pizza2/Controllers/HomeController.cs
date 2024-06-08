@@ -312,6 +312,11 @@ namespace Pizza2.Controllers
             return Json( new { isConfirmed = confirmation } );
         }
 
+        public JsonResult AddCustomPizza(IFormCollection collection)
+        {
+            return null;
+        }
+
         [ResponseCache( Duration = 0, Location = ResponseCacheLocation.None, NoStore = true )]
         public IActionResult Error( )
         {

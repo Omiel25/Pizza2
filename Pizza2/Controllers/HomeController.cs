@@ -89,14 +89,14 @@ namespace Pizza2.Controllers
             return View();
         }
 
-        public IActionResult AvalibleMenu( List<int>? customPizzaIds )
+        public IActionResult AvalibleMenu(List<int>? customPizzaIds)
         {
             if (IsWorker() || IsUser())
             {
                 AvalibleMenuModel model = new AvalibleMenuModel();
                 model.Pizzas = new List<AvalibleMenuPizzasSubModel>();
                 model.ShopCartPizzasIds = new List<string>();
-                
+
                 //Get pizzas from active menu (ItemA)
                 var pizzas = from menu in _context.Menu
                              join p in _context.Pizzas
@@ -126,15 +126,12 @@ namespace Pizza2.Controllers
                                     ingridientPrice = i.IngridientPrice
                                 };
 
-                    //pizzaHolder.ItemsB = query.Where( pi => pi.ingridientListId == pizza.IngridientsListId )
-                    //    .Select()
-                    //    .ToList();
                     List<int> pizzaIngridientIds = _context.PizzaIngridients
                         .Where( pi => pi.PizzaIngridientListId == pizza.IngridientsListId )
-                        .Select(pi => pi.IngridientId)
-                        .ToList( );
+                        .Select( pi => pi.IngridientId )
+                        .ToList();
 
-                    pizzaHolder.PizzaIngridients = ingridientList.Where(i => pizzaIngridientIds.Contains(i.Id)).ToList( );
+                    pizzaHolder.PizzaIngridients = ingridientList.Where( i => pizzaIngridientIds.Contains( i.Id ) ).ToList();
 
 
                     if (pizzaHolder.Pizza.PizzaPrice == null)
@@ -147,13 +144,7 @@ namespace Pizza2.Controllers
                             SetErrorMessage( "Couldn't find needed ingridients..." );
                             return View( "Login" );
                         }
-
-                        float pizzaPrice = ingridientList.Where( i => ingridientsID.Contains( i.Id ) )
-                            .ToList()
-                            .Select( i => i.IngridientPrice )
-                            .Sum();
-
-                        pizzaHolder.Pizza.PizzaPrice = pizzaPrice;
+                        pizzaHolder.Pizza.CalculateCustomPrice(ingridientsID, ingridientList );
                     }
 
                     model.Pizzas.Add( pizzaHolder );
@@ -171,19 +162,37 @@ namespace Pizza2.Controllers
 
         }
 
-        public IActionResult Order(List<ItemListHolderModel<PizzaViewModel, string>> model)
+        public IActionResult Order(IFormCollection collection)
         {
             if (IsUser() || IsWorker())
             {
-                if (model.Count() != 0)
+                if (collection.Count() != 0)
                 {
                     //Get user name with session 
                     //Send chosen pizzas id's
                     List<PizzaViewModel> selectedPizzas = new List<PizzaViewModel>();
 
-                    foreach (var item in model)
+                    foreach (var item in collection)
                     {
-                        selectedPizzas.Add( _context.Pizzas.Single( p => p.Id == item.Id ) );
+                        if (!item.Key.Contains( "Pizza", StringComparison.OrdinalIgnoreCase ))
+                            continue;
+
+                        int PizzaId = int.Parse(item.Value);
+                        PizzaViewModel pizza = _context.Pizzas.Single( p => p.Id == PizzaId );
+
+                        //Add price to custom pizza
+                        if (pizza.IsCustomPizza == true)
+                        {
+                            List<int> customIngridientsId = _context.CustomPizzaIngridients.
+                                Where( c => c.PizzaID == pizza.Id ).
+                                Select( c => c.IngridientID ).
+                                ToList();
+
+                            List<IngridientViewModel> ingridients = _context.Ingridients.ToList();
+                            pizza.CalculateCustomPrice( customIngridientsId, ingridients );
+                        }
+
+                        selectedPizzas.Add( pizza );
                     }
 
                     ViewData[ "User" ] = GetSessionUsername();
@@ -211,6 +220,8 @@ namespace Pizza2.Controllers
             {
                 if (model.Count() != 0)
                 {
+                    //Get ingridients for custom pizzas 
+                    List<IngridientViewModel> ingridients = _context.Ingridients.ToList();
                     //Get selected pizzas and fill needed variables
                     List<PizzaViewModel> selectedPizzas = new List<PizzaViewModel>();
                     float? totalPrice = 0;
@@ -222,6 +233,16 @@ namespace Pizza2.Controllers
 
                     foreach (var p in selectedPizzas)
                     {
+                        if(p.IsCustomPizza == true)
+                        {
+                            List<int> customIngridientsId = _context.CustomPizzaIngridients.
+                                Where(c => c.PizzaID == p.Id).
+                                Select(c => c.IngridientID).
+                                ToList();
+
+                            p.CalculateCustomPrice( customIngridientsId, ingridients );
+                        }
+
                         totalPrice += p.PizzaPrice;
                     }
 
@@ -251,7 +272,7 @@ namespace Pizza2.Controllers
                     _context.OrderItems.AddRange( orderList );
                     _context.SaveChanges();
 
-                    //If order maker is USer redirect them to thank you page nad go back to index after few seconds
+                    //If order maker is User redirect them to thank you page nad go back to index after few seconds
                     if (IsUser())
                     {
                         return RedirectToAction( nameof( SeeOrder ), order );
@@ -312,9 +333,37 @@ namespace Pizza2.Controllers
             return Json( new { isConfirmed = confirmation } );
         }
 
-        public JsonResult AddCustomPizza(IFormCollection collection)
+        public JsonResult CreateCustomPizza(string[] ingridients, string name)
         {
-            return null;
+            PizzaViewModel customPizza = new PizzaViewModel();
+            customPizza.IsCustomPizza = true;
+            customPizza.PizzaName = String.IsNullOrEmpty( name ) ? "Custom Pizza" : name ;
+
+            _context.Pizzas.Add( customPizza );
+            _context.SaveChanges();
+
+            int pizzaID = customPizza.Id;
+
+            List<IngridientViewModel> pizzaIngridients = _context.Ingridients.
+            Where( i =>
+                ingridients.Contains( i.IngridientName ) ||
+                i.IngridientName == "Pizza Pie" )
+            .ToList();
+
+            foreach (IngridientViewModel ingridient in pizzaIngridients)
+            {
+                CustomPizzaIngridientsViewModel customPizzaIngridient = new CustomPizzaIngridientsViewModel()
+                {
+                    PizzaID = pizzaID,
+                    IngridientID = ingridient.Id
+                };
+
+                _context.CustomPizzaIngridients.Add( customPizzaIngridient );
+            }
+
+            _context.SaveChanges();
+
+            return Json( new { addedPizzaID = pizzaID } );
         }
 
         [ResponseCache( Duration = 0, Location = ResponseCacheLocation.None, NoStore = true )]

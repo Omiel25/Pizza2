@@ -81,16 +81,16 @@
                 <div class="row py-1">
                     @{
                         int saucesNumber = sauces.Count();
-                                        @if (saucesNumber > 0)
+                                                @if (saucesNumber > 0)
                         {
                             foreach (var sauce in sauces)
                             {
-                                    <div class="col">
-                                        <label class="form-check-label" for="Sauce">
-                                            @sauce.IngridientName
-                                            <input type="radio" name="Sauce" value="@sauce.IngridientName" id="@sauce.IngridientName" class="form-check-input">
-                                        </label>
-                                    </div>
+                                            <div class="col">
+                                                <label class="form-check-label" for="Sauce">
+                                                    @sauce.IngridientName
+                                                    <input type="radio" name="Sauce" value="@sauce.IngridientName" id="@sauce.IngridientName" class="form-check-input">
+                                                </label>
+                                            </div>
                             }
                         }
                     }
@@ -105,16 +105,16 @@
                     </div>
                     @{
                         int pieNumber = sauces.Count();
-                                        @if (pieNumber > 0)
+                                                @if (pieNumber > 0)
                         {
                             foreach (var pie in pies)
                             {
-                                    <div class="col">
-                                        <label class="form-check-label" for="Pie">
-                                            @pie.IngridientName
-                                            <input type="radio" name="Pie" value="@pie.IngridientName" id="@pie.IngridientName" class="form-check-input">
-                                        </label>
-                                    </div>
+                                            <div class="col">
+                                                <label class="form-check-label" for="Pie">
+                                                    @pie.IngridientName
+                                                    <input type="radio" name="Pie" value="@pie.IngridientName" id="@pie.IngridientName" class="form-check-input">
+                                                </label>
+                                            </div>
                             }
                         }
                     }
@@ -123,16 +123,16 @@
                 <div class="row py-1">
                     @{
                         int ingridientNumber = classicIngridients.Count();
-                                        @if (ingridientNumber > 0)
+                                                @if (ingridientNumber > 0)
                         {
                             foreach (var ingridient in classicIngridients)
                             {
-                                    <div class="col-4">
-                                        <label class="form-check-label" for="Pie">
-                                            @ingridient.IngridientName
-                                            <input type="checkbox" name="@ingridient.IngridientName" value="@ingridient.IngridientName" id="@ingridient.IngridientName" class="form-check-input">
-                                        </label>
-                                    </div>
+                                            <div class="col-4">
+                                                <label class="form-check-label" for="Pie">
+                                                    @ingridient.IngridientName
+                                                    <input type="checkbox" name="@ingridient.IngridientName" value="@ingridient.IngridientName" id="@ingridient.IngridientName" class="form-check-input">
+                                                </label>
+                                            </div>
                             }
                         }
                     }
@@ -145,6 +145,7 @@
                     <div id="custom-pizza-form-ingridients">
 
                     </div>
+                    <input type="text" name="pizza-name" value="Custom Pizza" id="pizza-name" class="form-control" />
                     <input type="text" name="pizza-price" value="@startingPrice" id="custom-pizza-price-input" hidden/>
                     <button id="add-custom-pizza-btn" class="btn btn-success">Add pizza to the cart</button>
                 </div>
@@ -175,13 +176,16 @@
                 <div class="col-4 pizza-ingridients">
                     @for (int i = 0; i < pizzaHolder.PizzaIngridients.Count(); i++)
                     {
-                        if (i + 1 == pizzaHolder.PizzaIngridients.Count())
+                        if (!@pizzaHolder.PizzaIngridients[i].IngridientName.Contains("Pizza Pie", StringComparison.OrdinalIgnoreCase ))
                         {
-                            <span>@pizzaHolder.PizzaIngridients[ i ].IngridientName</span>
-                        }
-                        else
-                        {
-                            <span>@pizzaHolder.PizzaIngridients[ i ].IngridientName, </span>
+                            if (i + 1 == pizzaHolder.PizzaIngridients.Count())
+                            {
+                                <span>@pizzaHolder.PizzaIngridients[ i ].IngridientName</span>
+                            }
+                            else
+                            {
+                                <span>@pizzaHolder.PizzaIngridients[ i ].IngridientName, </span>
+                            }
                         }
                     }
                 </div>
@@ -215,6 +219,7 @@
     var cartContainer = document.getElementById("cart-container");
     var dataContainer = document.getElementsByName("data-container");
     var orderCount = document.getElementById("order-count");
+
     var cartSizeCount = 0;
 
     dataContainer.forEach((container, index) => {
@@ -228,7 +233,7 @@
 
             var newInput = "";
 
-            newInput = `<input type="number" name="Model[${cartSizeCount}].Id" value="${id}" id="data" hidden>`;
+            newInput = `<input type="number" name="pizza-${cartSizeCount}" value="${id}" id="data" hidden>`;
 
             cartContainer.innerHTML += newInput;
 
@@ -302,16 +307,14 @@
         });
     }
     //----------- END Pizza_Creation -----------
-</script>
 
-<script type="text/javascript" defer>
+    //------------------------------------------
     let customPizzaImages = document.querySelectorAll("#custom-pizza-images .pizza-ingridient-image");
-
     let customPizzaInputs = document.querySelectorAll("#custom-pizza-ingridients input");
+    let customPizzaForm = document.querySelector("#custom-pizza-form-container #custom-pizza-form");
 
-    let customPizzaForm = document.querySelector("#custom-pizza-form-container form");
+    let customPizzaIngridients = [];
 
-    let startingPizzaPrice
     //Set all ingridients visibility to hidden
     customPizzaImages.forEach(image => {
         image.style.visibility = "hidden";
@@ -354,6 +357,9 @@
             var ingridients = JSON.parse('@Html.Raw(Json.Serialize(Model.Ingridients))');
             var pizzaPrice = JSON.parse('@Html.Raw( Json.Serialize( startingPrice ) )');
 
+            //Reset custom pizza ingridients
+            customPizzaIngridients = [];
+
             customPizzaInputs.forEach(box => {
                 if (box.checked) {
                     //Set price
@@ -372,9 +378,10 @@
                             //Put ingridients inside form container
                             var newInput = "";
 
-                            newInput = `<input type="number" name="${ingridient.ingridientName}" value="${ingridient.id}">`;
+                            newInput = `<input type="number" name="${ingridient.ingridientName}" value="${ingridient.id}" hidden>`;
 
                             customPizzaFormIngridientsContainer.innerHTML += newInput;
+                            customPizzaIngridients.push(ingridient.ingridientName);
                         }
                     });
                 }
@@ -385,21 +392,50 @@
 
             let customPizzaPriceInput = document.querySelector("#custom-pizza-form-container #custom-pizza-price-input");
             customPizzaPriceInput.value = (Math.round(pizzaPrice * 100) / 100).toFixed(2);
-
-            //Fire ajax request to server - AddCustomPizza - and add result to the basket
-            let customPizzaFormInputs = customPizzaForm.querySelectorAll("#custom-pizza-form-ingridients input")
-            let customPizzaFormButton = customPizzaForm.querySelector("#add-custom-pizza-btn");
-            customPizzaFormButton.addEventListener("click", AddCustomPizza);
-
-            function AddCustomPizza(event) {
-                let ingridientsArray = [];
-
-                customPizzaFormInputs.forEach(input => {
-                    ingridientsArray.push(input.value);
-                });
-            }
         });
     });
+
+    //Fire ajax request to server - AddCustomPizza - and add result to the basket
+    let customPizzaFormInputs = document.querySelectorAll("#custom-pizza-form-ingridients input")
+    let customPizzaFormButton = document.querySelector("#add-custom-pizza-btn");
+    let pizzaCart = document.querySelectorAll("#cart-container input");
+    let pizzaNameInput = document.querySelector("#pizza-name");
+
+    function AddCustomPizza(event) {
+        let pizzaName = pizzaNameInput.value;
+
+        $.ajax({
+            url: '/Home/createCustomPizza',
+            type: 'post',
+            traditional: true,
+            data: { ingridients: customPizzaIngridients, name: pizzaName },
+            dataType: 'json',
+            success: function (data) {
+                var newInput = "";
+
+                newInput = `<input type="number" name="pizza-${cartSizeCount}" value="${data.addedPizzaID}" id="data" hidden>`;
+
+                cartContainer.innerHTML += newInput;
+
+                cartSizeCount++;
+
+                //Show alert with success message
+                swal({
+                    icon: "success",
+                    title: "Success",
+                    text: `Succesfully added Your own pizza to the cart!`
+                });
+
+                //Refresh order count
+                orderCount.innerHTML = `${cartSizeCount} - `;
+            },
+            error: function (data) {
+                alert("Something went wrong...");
+            }
+        });
+    }
+
+    customPizzaFormButton.addEventListener("click", AddCustomPizza);
     /*
     1.Get ID of the input
     2.Get img with the same id

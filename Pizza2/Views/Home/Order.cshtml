@@ -21,7 +21,7 @@
     <hr />
 </div>
 @{
-    float? total = 0.0f;
+    float total = 0.0f;
     var count = 0;
 }
 
@@ -46,13 +46,13 @@
                             <input type="number" asp-for="@Model[count].Id" value="@item.Id" hidden>
                         </tr>
 
-                        total += item.PizzaPrice;
+                        total += item.PizzaPrice == null ? 0f : item.PizzaPrice.Value;
                         count++;
                     }
                     <tr>
                         <td class="bg-white">&nbsp;</td>
                         <td class="float-end">Total: </td>
-                        <td class="">@total</td>
+                        <td class="">@total.ToString("0.00")</td>
                     </tr>
                 </tbody>
 

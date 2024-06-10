@@ -13,6 +13,7 @@ namespace Pizza2.Data
         public DbSet<OrderHistoryViewModel> OrdersHistory { get; set; }
         public DbSet<MenuViewModel> Menu { get; set; }
         public DbSet<UserViewModel> User { get; set; }
+        public DbSet<CustomPizzaIngridientsViewModel> CustomPizzaIngridients { get; set; }
 
 
 

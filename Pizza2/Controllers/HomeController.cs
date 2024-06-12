@@ -94,7 +94,7 @@ namespace Pizza2.Controllers
             if (IsWorker() || IsUser())
             {
                 AvalibleMenuModel model = new AvalibleMenuModel();
-                model.Pizzas = new List<AvalibleMenuPizzasSubModel>();
+                model.Pizzas = new List<PizzaSubModel>();
                 model.ShopCartPizzasIds = new List<string>();
 
                 //Get pizzas from active menu (ItemA)
@@ -110,7 +110,7 @@ namespace Pizza2.Controllers
                 foreach (var pizza in pizzas)
                 {
                     //Item containing <Pizza, ingridients names>
-                    AvalibleMenuPizzasSubModel pizzaHolder = new AvalibleMenuPizzasSubModel();
+                    PizzaSubModel pizzaHolder = new PizzaSubModel();
                     pizzaHolder.PizzaIngridients = new List<IngridientViewModel>();
                     pizzaHolder.Pizza = pizza;
 
@@ -180,16 +180,27 @@ namespace Pizza2.Controllers
                         int PizzaId = int.Parse(item.Value);
                         PizzaViewModel pizza = _context.Pizzas.Single( p => p.Id == PizzaId );
 
-                        //Add price to custom pizza
-                        if (pizza.IsCustomPizza == true)
+                        //Add price to custom pizza or pizza with automatic price calculation
+                        List<int> pizzaIngridinetsId;
+                        if(pizza.IsCustomPizza || pizza.PizzaPrice == null)
                         {
-                            List<int> customIngridientsId = _context.CustomPizzaIngridients.
-                                Where( c => c.PizzaID == pizza.Id ).
-                                Select( c => c.IngridientID ).
-                                ToList();
+                            if (pizza.IsCustomPizza == true)
+                            {
+                                pizzaIngridinetsId = _context.CustomPizzaIngridients.
+                                    Where( c => c.PizzaID == pizza.Id ).
+                                    Select( c => c.IngridientID ).
+                                    ToList();
+                            }
+                            else
+                            {
+                                pizzaIngridinetsId = _context.PizzaIngridients.
+                                    Where( c => c.PizzaIngridientListId == pizza.IngridientsListId ).
+                                    Select( c => c.IngridientId ).
+                                    ToList();
+                            }
 
                             List<IngridientViewModel> ingridients = _context.Ingridients.ToList();
-                            pizza.CalculateCustomPrice( customIngridientsId, ingridients );
+                            pizza.CalculateCustomPrice( pizzaIngridinetsId, ingridients );
                         }
 
                         selectedPizzas.Add( pizza );
@@ -233,12 +244,23 @@ namespace Pizza2.Controllers
 
                     foreach (var p in selectedPizzas)
                     {
-                        if(p.IsCustomPizza == true)
+                        List<int> customIngridientsId;
+                        if(p.PizzaPrice == null)
                         {
-                            List<int> customIngridientsId = _context.CustomPizzaIngridients.
-                                Where(c => c.PizzaID == p.Id).
-                                Select(c => c.IngridientID).
+                            if(p.IsCustomPizza == true)
+                            {
+                                customIngridientsId = _context.CustomPizzaIngridients.
+                                Where( c => c.PizzaID == p.Id ).
+                                Select( c => c.IngridientID ).
                                 ToList();
+                            } else
+                            {
+                                customIngridientsId = _context.PizzaIngridients.
+                                Where( i => i.PizzaIngridientListId == p.IngridientsListId ).
+                                Select( c => c.IngridientId ).
+                                ToList();
+
+                            }
 
                             p.CalculateCustomPrice( customIngridientsId, ingridients );
                         }

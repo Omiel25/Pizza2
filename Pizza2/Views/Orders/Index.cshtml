@@ -1,4 +1,4 @@
-﻿@model List<ItemListHolderModel<OrderViewModel, OrderItemsViewModel>>
+﻿@model List<AcceptedOrderModel>
 <h3>Pending orders</h3>
 <p>This is page for managing restaurant pending orders~~</p>
 @{
@@ -51,19 +51,19 @@
                     //Good up to this point
                     dataTableBody.innerHTML += `
                             <tr>
-                                <td>${order.orderId}</td>
-                                <td>${order.ordererName}</td>
-                                <td>${order.pizzas}</td>
+                                <td>${order.id}</td>
+                                <td>${order.name}</td>
+                                    <td class="text-start">${order.pizzas}</td>
                                 <td>${order.price}pln</td>
                                 <td>
                                     <form action="/Orders/ConfirmOrder" method="post">
-                                        <input name="orderId" type="number" value="${order.orderId}" hidden>
+                                        <input name="orderId" type="number" value="${order.id}" hidden>
                                         <button type="submit" class="btn btn-success">Confirm</button>
                                     </form>
                                 </td>
                                 <td>
                                     <form action="/Orders/RejectOrder" method="post">
-                                        <input name="orderId" type="number" value="${order.orderId}" hidden>
+                                        <input name="orderId" type="number" value="${order.id}" hidden>
                                         <button type="submit" class="btn btn-danger">Reject</button>
                                     </form>
                                 </td>
@@ -94,19 +94,19 @@
                     //Good up to this point
                     dataTableBody.innerHTML += `
                         <tr>
-                            <td>${order.orderId}</td>
-                            <td>${order.ordererName}</td>
-                            <td>${order.pizzas}</td>
+                            <td>${order.id}</td>
+                            <td>${order.name}</td>
+                            <td class="text-start">${order.pizzas}</td>
                             <td>${order.price}pln</td>
                             <td>
                                 <form action="/Orders/ConfirmOrder" method="post">
-                                    <input name="orderId" type="number" value="${order.orderId}" hidden>
+                                    <input name="orderId" type="number" value="${order.id}" hidden>
                                     <button type="submit" class="btn btn-success">Confirm</button>
                                 </form>
                             </td>
                             <td>
                                 <form action="/Orders/RejectOrder" method="post">
-                                    <input name="orderId" type="number" value="${order.orderId}" hidden>
+                                    <input name="orderId" type="number" value="${order.id}" hidden>
                                     <button type="submit" class="btn btn-danger">Reject</button>
                                 </form>
                             </td>

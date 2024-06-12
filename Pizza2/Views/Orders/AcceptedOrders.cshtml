@@ -1,4 +1,4 @@
-﻿@model List<ItemListHolderModel<OrderViewModel, string>>
+﻿@model List<AcceptedOrderModel>
 <h3>Accepted orders</h3>
 <p>This is page for seeing restaurant accepted orders~~</p>
 @{
@@ -26,24 +26,43 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td> @item.ItemA.Id </td>
-                        <td> @item.ItemA.OrderMakerName </td>
-                        <td>
-                            @for (int i = 0; i < item.ItemsB.Count(); i++)
+                        <td> @item.OrderData.Id </td>
+                        <td> @item.OrderData.OrderMakerName </td>
+                        <td class="text-start">
+                            @for (int i = 0; i < item.OrderedPizzas.Count(); i++)
                             {
-                                if (i + 1 == item.ItemsB.Count())
+                                if (item.OrderedPizzas[ i ].Pizza.IsCustomPizza == true)
                                 {
-                                    <span>@item.ItemsB[i]</span>
+                                    <p class="fw-bold">
+                                        @item.OrderedPizzas[ i ].Pizza.PizzaName
+                                        (
+                                        @for (int ii = 0; ii < item.OrderedPizzas[ i ].PizzaIngridients.Count(); ii++)
+                                        {
+                                            if (ii + 1 == item.OrderedPizzas[ i ].PizzaIngridients.Count())
+                                            {
+                                                <span>
+                                                    @item.OrderedPizzas[ i ].PizzaIngridients[ ii ].IngridientName
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span>
+                                                    @item.OrderedPizzas[ i ].PizzaIngridients[ ii ].IngridientName,
+                                                </span>
+                                            }
+                                        }
+                                        )
+                                    </p>
                                 }
                                 else
                                 {
-                                    <span>@item.ItemsB[i], </span>
+                                    <p> @item.OrderedPizzas[ i ].Pizza.PizzaName </p>
                                 }
                             }
                         </td>
                         <td>
                             <form asp-controller="Orders" asp-action="OrderReady" method="post">
-                                <input name="orderId" value="@item.ItemA.Id" type="number" hidden>
+                                <input name="orderId" value="@item.OrderData.Id" type="number" hidden>
                                 <button type="submit" class="btn btn-success">Confirm</button>
                             </form>
                         </td>
@@ -66,29 +85,32 @@
             url: '/Orders/GetAcceptedOrders',
             type: 'post',
             dataType: 'json',
+            contentType: "application/json; charset=utf-8",
             success: function (data) {
-                dataTableBody.innerHTML = "";
+                var newTable = "";
+                // dataTableBody.innerHTML = "";
 
                 data.forEach(order => {
-                    //Good up to this point
-                    dataTableBody.innerHTML += `
-                            <tr>
-                                <td>${order.orderId}</td>
-                                <td>${order.ordererName}</td>
-                                <td>${order.pizzas}</td>
-                                <td>
-                                    <form action="/Orders/OrderReady" method="post">
-                                        <input name="orderId" type="number" value="${order.orderId}" hidden>
-                                        <button type="submit" class="btn btn-success">Confirm</button>
-                                    </form>
-                                </td>
-                                
-                            </tr>
-                            `;
+                    console.log(order);
+                    newTable += `
+                                        <tr>
+                                            <td>${order.orderId}</td>
+                                            <td>${order.ordererName}</td>
+                                            <td class="text-start">${order.pizzaText}</td>
+                                            <td>
+                                                <form action="/Orders/OrderReady" method="post">
+                                                    <input name="orderId" type="number" value="${order.orderId}" hidden>
+                                                    <button type="submit" class="btn btn-success">Confirm</button>
+                                                </form>
+                                            </td>
+
+                                        </tr>
+                                        `;
                 });
+
+                dataTableBody.innerHTML = newTable;
             },
             error: function (data) {
-
                 count++;
                 if (count > 20) {
                     alert("Something went wrong...")
@@ -96,6 +118,7 @@
                 }
             }
         });
-    }, 20000);
+    }, 10000);
+    
 
 </script>

@@ -41,5 +41,11 @@ namespace Pizza2.Models
                 this.PizzaPrice = float.Parse(finalPrice);
             }
         }
+
+        public string CreateIngridientList( List<int> ingridientsId, List<IngridientViewModel> ingridients )
+        {
+
+            return null;
+        }
     }
 }

@@ -2,7 +2,7 @@
 
 @{
     //Layout is avalible fo displaying shared views
-    if ((int)TempData[ "privilages" ] == 1)
+    if ((int)TempData["Privilages"] == 1)
     {
         Layout = "~/Views/Shared/_WorkerLayout.cshtml";
     }
@@ -10,21 +10,13 @@
     {
         Layout = "~/Views/Shared/Logo.cshtml";
     }
-    List<IngridientViewModel> sauces = Model.Ingridients
-        .Where( p => p.IngridientName.Contains( "Sauce", StringComparison.OrdinalIgnoreCase ) )
-        .ToList();
-    List<IngridientViewModel> pies = Model.Ingridients
-        .Where( p =>
-            p.IngridientName.Contains( "Pie", StringComparison.OrdinalIgnoreCase ) &&
-            p.IngridientName != "Pizza Pie" )
-        .ToList();
-    List<IngridientViewModel> classicIngridients = Model.Ingridients
-        .Where( p =>
-            !p.IngridientName.Contains( "Pie", StringComparison.OrdinalIgnoreCase ) &&
-            !p.IngridientName.Contains( "Sauce", StringComparison.OrdinalIgnoreCase )
-        ).ToList();
+
     int pizzaCount = 0;
-    float startingPrice = Model.Ingridients.Where(i => i.IngridientName == "Pizza Pie").Select(i => i.IngridientPrice).FirstOrDefault();
+    int ingridientCount = Model?.Ingridients?.Count() ?? 0;
+    float startingPrice = Model?.Ingridients?
+    .Where(i => 
+        i.IngridientName == "Pizza Pie").Select(i => i.IngridientPrice)
+    .FirstOrDefault() ?? 0f; 
 }
 
 <div class="text-center container">
@@ -56,9 +48,9 @@
             </div>
 
             <div class="col-4" id="custom-pizza-images">
-                @for (int i = 0; i < Model.Ingridients.Count(); i++)
+                @for (int i = 0; i < ingridientCount; i++)
                 {
-                    string ingridientName = Model.Ingridients[ i ].IngridientName;
+                    string ingridientName = Model?.Ingridients?[ i ].IngridientName ?? "error";
                     @if (ingridientName == "Pizza Pie")
                     {
                         <img src="@Url.Content($"~/images/Ingridients/{ingridientName}.png")"
@@ -79,20 +71,14 @@
 
             <div class="col-5" id="custom-pizza-ingridients">
                 <div class="row py-1">
-                    @{
-                        int saucesNumber = sauces.Count();
-                        @if (saucesNumber > 0)
-                        {
-                            foreach (var sauce in sauces)
-                            {
-                                <div class="col-4">
-                                    <label class="form-check-label" for="Sauce">
-                                        @sauce.IngridientName
-                                        <input type="radio" name="Sauce" value="@sauce.IngridientName" id="@sauce.IngridientName" class="form-check-input">
-                                    </label>
-                                </div>
-                            }
-                        }
+                    @foreach (var sauce in Model.Sauces)
+                    {
+                        <div class="col-4">
+                            <label class="form-check-label" for="Sauce">
+                                @sauce.IngridientName
+                                <input type="radio" name="Sauce" value="@sauce.IngridientName" id="@sauce.IngridientName" class="form-check-input">
+                            </label>
+                        </div>
                     }
                 </div>
 
@@ -100,39 +86,27 @@
                     <div class="col">
                         <label class="form-check-label" for="Pie">
                             Classic Pizza Pie
-                            <input type="radio" name="Pie" value="@pies[0].IngridientName" id="Pizza Pie" class="form-check-input" checked>
+                            <input type="radio" name="Pie" value="@Model.Pies[0].IngridientName" id="Pizza Pie" class="form-check-input" checked>
                         </label>
                     </div>
-                    @{
-                        int pieNumber = pies.Count();
-                        @if (pieNumber > 0)
-                        {
-                            foreach (var pie in pies)
-                            {
-                                <div class="col">
-                                    <label class="form-check-label" for="Pie">
-                                        @pie.IngridientName
-                                        <input type="radio" name="Pie" value="@pie.IngridientName" id="@pie.IngridientName" class="form-check-input">
-                                    </label>
-                                </div>
-                            }
-                        }
+                    @foreach (var pie in Model.Pies)
+                    {
+                        <div class="col">
+                            <label class="form-check-label" for="Pie">
+                                @pie.IngridientName
+                                <input type="radio" name="Pie" value="@pie.IngridientName" id="@pie.IngridientName" class="form-check-input">
+                            </label>
+                        </div>
                     }
                 </div>
 
                 <div class="row justify-content-start py-1">
-                    @{
-                        int ingridientNumber = classicIngridients.Count();
-                        @if (ingridientNumber > 0)
-                        {
-                            foreach (var ingridient in classicIngridients)
-                            {
-                                <div class="col-4">
-                                    <span> @ingridient.IngridientName </span>
-                                    <input type="checkbox" name="@ingridient.IngridientName" value="@ingridient.IngridientName" id="@ingridient.IngridientName" class="form-check-input">
-                                </div>
-                            }
-                        }
+                    @foreach (var ingridient in Model.ClassicIngridients)
+                    {
+                        <div class="col-4">
+                            <span> @ingridient.IngridientName </span>
+                            <input type="checkbox" name="@ingridient.IngridientName" value="@ingridient.IngridientName" id="@ingridient.IngridientName" class="form-check-input">
+                        </div>
                     }
                 </div>
             </div>
@@ -151,77 +125,81 @@
 
             <hr />
         </div>
-        @foreach (var pizzaHolder in Model.Pizzas)
+        @if(Model?.Pizzas != null)
         {
-            <div class="row pizza-container">
+            @foreach (var pizzaHolder in Model.Pizzas)
+            {
+                <div class="row pizza-container">
 
-                <div class="col-12 pizza-container-header text-center text-special" id="pizza-header-container">
-                    @if(pizzaHolder.PizzaIngridients.Where(i => i.ContainsMeat ).Any())
-                    {
-                        <div class="d-flex justify-content-center">
-                            <h4>@pizzaHolder.Pizza.PizzaName</h4>
-                        </div>
-                    } else
-                    {
-                        <div class="d-flex justify-content-center">
-                            <h4>@pizzaHolder.Pizza.PizzaName</h4>
-                            <img src="@Url.Content($"~/images/AvalibleMenu/Vege.png")"
-                                 class="img-fluid rounded-top mx-2"
-                                 id="img1"
-                                 style="height: 32px; width: 32px;"
-                                 alt="" />
-                        </div>
-                    }
-                </div>
-
-                <div class="col-5 pizza-image" id="pizza-img-container" name="pizza-image-container">
-                    @for (int i = 0; i < pizzaHolder.PizzaIngridients.Count(); i++)
-                    {
-                        <img src="@Url.Content($"~/images/Ingridients/{pizzaHolder.PizzaIngridients[i].IngridientName}.png")"
-                             class="img-fluid rounded-top"
-                             id="img1"
-                             style="z-index: @pizzaHolder.PizzaIngridients[i].ImagePriority;"
-                             alt="" />
-                    }
-                    @* <img src="~/images/AvalibleMenu/Pizza.png" class="img-fluid" alt="Responsive image"> *@
-                </div>
-
-                <div class="col-4 pizza-ingridients text-start">
-                    @for (int i = 0; i < pizzaHolder.PizzaIngridients.Count(); i++)
-                    {
-                        if (!@pizzaHolder.PizzaIngridients[i].IngridientName.Contains("Pizza Pie", StringComparison.OrdinalIgnoreCase ))
+                    <div class="col-12 pizza-container-header text-center text-special" id="pizza-header-container">
+                        @if (pizzaHolder.PizzaIngridients.Where( i => i.ContainsMeat ).Any())
                         {
-                            if (i + 1 == pizzaHolder.PizzaIngridients.Count())
+                            <div class="d-flex justify-content-center">
+                                <h4>@pizzaHolder.Pizza.PizzaName</h4>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="d-flex justify-content-center">
+                                <h4>@pizzaHolder.Pizza.PizzaName</h4>
+                                <img src="@Url.Content($"~/images/AvalibleMenu/Vege.png")"
+                                     class="img-fluid rounded-top mx-2"
+                                     id="img1"
+                                     style="height: 32px; width: 32px;"
+                                     alt="" />
+                            </div>
+                        }
+                    </div>
+
+                    <div class="col-5 pizza-image" id="pizza-img-container" name="pizza-image-container">
+                        @for (int i = 0; i < pizzaHolder.PizzaIngridients.Count(); i++)
+                        {
+                            <img src="@Url.Content($"~/images/Ingridients/{pizzaHolder.PizzaIngridients[i].IngridientName}.png")"
+                                 class="img-fluid rounded-top"
+                                 id="img1"
+                                 style="z-index: @pizzaHolder.PizzaIngridients[i].ImagePriority;"
+                                 alt="" />
+                        }
+                        @* <img src="~/images/AvalibleMenu/Pizza.png" class="img-fluid" alt="Responsive image"> *@
+                    </div>
+
+                    <div class="col-4 pizza-ingridients text-start">
+                        @for (int i = 0; i < pizzaHolder.PizzaIngridients.Count(); i++)
+                        {
+                            if (!@pizzaHolder.PizzaIngridients[ i ].IngridientName.Contains( "Pizza Pie", StringComparison.OrdinalIgnoreCase ))
                             {
-                                <span class="py-3">@pizzaHolder.PizzaIngridients[ i ].IngridientName</span>
-                            }
-                            else
-                            {
-                                <span class="py-3">@pizzaHolder.PizzaIngridients[ i ].IngridientName, </span>
+                                if (i + 1 == pizzaHolder.PizzaIngridients.Count())
+                                {
+                                    <span class="py-3">@pizzaHolder.PizzaIngridients[ i ].IngridientName</span>
+                                }
+                                else
+                                {
+                                    <span class="py-3">@pizzaHolder.PizzaIngridients[ i ].IngridientName, </span>
+                                }
                             }
                         }
-                    }
-                </div>
+                    </div>
 
-                <div class="col-3 pizza-buttons text-center">
-                    <div class="row">
-                        <div class="col-12 py-3">
-                            <span>@pizzaHolder.Pizza.PizzaPrice PLN</span>
+                    <div class="col-3 pizza-buttons text-center">
+                        <div class="row">
+                            <div class="col-12 py-3">
+                                <span>@pizzaHolder.Pizza.PizzaPrice PLN</span>
+                            </div>
+                            <div class="col-12 py-3" name="data-container">
+                                <input type="number" value="@pizzaHolder.Pizza.Id" id="data" hidden>
+                                <input class="" type="text" value="@pizzaHolder.Pizza.PizzaName" id="data-name" hidden>
+                                <button class="btn btn-primary" id="add-to-cart-btn">Add to cart!</button>
+                            </div>
                         </div>
-                        <div class="col-12 py-3" name="data-container">
-                            <input type="number" value="@pizzaHolder.Pizza.Id" id="data" hidden>
-                            <input class="" type="text" value="@pizzaHolder.Pizza.PizzaName" id="data-name" hidden>
-                            <button class="btn btn-primary" id="add-to-cart-btn">Add to cart!</button>
-                        </div>
+
                     </div>
 
                 </div>
-
-            </div>
-            pizzaCount++;
-            @if (pizzaCount != Model.Pizzas.Count())
-            {
-                <hr />
+                pizzaCount++;
+                @if (pizzaCount != Model.Pizzas.Count())
+                {
+                    <hr />
+                }
             }
         }
     </div>
@@ -275,6 +253,9 @@
 
     if (document.readyState) {
         imageContainer.forEach(container => {
+            console.log("Container height: " + containerHeight);
+            console.log("containerRect.bottom: " + containerRect.bottom);
+            console.log("containerRect.top: " + containerRect.top);
             let containerRect = container.getBoundingClientRect();
             let containerHeight = containerRect.bottom - containerRect.top;
 

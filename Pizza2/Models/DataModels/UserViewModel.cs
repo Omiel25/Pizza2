@@ -40,6 +40,8 @@ namespace Pizza2.Models
 
         private string _password;
 
+        public DateTime? CreationDate { get; set; }
+
         public UserViewModel()
         {
 

@@ -2,8 +2,8 @@
 {
     public class TwoItemsModel<Y, T>
     {
-        public Y itemOne { get; set; }
+        public Y? itemOne { get; set; }
 
-        public T itemTwo { get; set; }
+        public T? itemTwo { get; set; }
     }
 }

@@ -34,15 +34,10 @@ namespace Pizza2.Controllers
                 }
                 else if (matchUser.Count() > 1)
                 {
-
-                    //If there is more than one user
-                    TempData[ "error" ] = "Error: Too many Users found!";
-
                     return RedirectToAction( nameof( Login ) );
                 }
                 else
                 {
-
                     //If there is only one user
                     SetSessionPrivilages( matchUser[ 0 ].UserName, matchUser[ 0 ].Privilages.ToString() );
 
@@ -94,8 +89,11 @@ namespace Pizza2.Controllers
             if (IsWorker() || IsUser())
             {
                 AvalibleMenuModel model = new AvalibleMenuModel();
+                List<IngridientViewModel> ingridientList = _context.Ingridients.OrderBy( p => p.DisplayPriority ).ToList();
+
+                model.Ingridients = ingridientList;
+                model.FillAdditionalIngridients();
                 model.Pizzas = new List<PizzaSubModel>();
-                model.ShopCartPizzasIds = new List<string>();
 
                 //Get pizzas from active menu (ItemA)
                 var pizzas = from menu in _context.Menu
@@ -103,9 +101,6 @@ namespace Pizza2.Controllers
                              on menu.PizzaId equals p.Id
                              where menu.IsActive
                              select p;
-
-                List<IngridientViewModel> ingridientList = _context.Ingridients.OrderBy( p => p.DisplayPriority ).ToList();
-                model.Ingridients = ingridientList;
 
                 foreach (var pizza in pizzas)
                 {
@@ -151,7 +146,7 @@ namespace Pizza2.Controllers
                 }
 
 
-                TempData[ "privilages" ] = GetSessionPrivilages();
+                TempData["Privilages"] = GetSessionPrivilages();
                 return View( model );
             }
             else
@@ -346,7 +341,7 @@ namespace Pizza2.Controllers
             {
                 confirmation = _context.Orders.Single( p => p.Id == id ).OrderConfirmed;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 confirmation = false;
             }

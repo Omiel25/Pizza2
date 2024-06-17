@@ -87,8 +87,10 @@ namespace Pizza2.Controllers
 
                     PizzaIngridientsViewModel model = new PizzaIngridientsViewModel() { 
                         PizzaIngridientListId = result, 
-                        IngridientListName = ingridientListName 
+                        IngridientListName = ingridientListName,
+                        CreationDate = DateTime.Now
                     };
+
                     string findIngridientID = item.Key == "Sauce" ? item.Value : item.Key;
 
                     if (int.TryParse( findIngridientID, out int ingridientId ))
@@ -120,7 +122,6 @@ namespace Pizza2.Controllers
         {
             if (IsAdmin())
             {
-                //var ingridientsList = _context.Ingridients.Join($"SELECT PizzaIngridients.IngridientId, Ingridients.Id, Ingridients.IngridientName FROM PizzaIngridients INNER JOIN Ingridients ON PizzaIngridients.IngridientId = Ingridients.Id;").ToList();
                 var query = from list in _context.PizzaIngridients
                             join i in _context.Ingridients on list.IngridientId equals i.Id
                             orderby list.PizzaIngridientListId, i.DisplayPriority ascending

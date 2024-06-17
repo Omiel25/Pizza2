@@ -19,8 +19,8 @@
                 {
                     <tr>
                         <td>@count</td>
-                        <td>@menu.menuId</td>
-                        <td>@menu.menuName</td>
+                        <td>@menu.MenuId</td>
+                        <td>@menu.MenuName</td>
                         <td>
                         @if (menu.IsActive == true)
                         {
@@ -33,7 +33,7 @@
                         </td>
                         <td>
                             <form asp-controller="Menu" asp-action="DeleteMenu" method="post">
-                                <input asp-for="@Model.itemId" type="number" value="@menu.menuId" hidden>
+                                <input asp-for="@Model.itemId" type="number" value="@menu.MenuId" hidden>
                                 <button type="submit" class="btn btn-danger">Delete</button>
                             </form>
                         </td>

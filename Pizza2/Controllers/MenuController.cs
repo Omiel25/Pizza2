@@ -12,30 +12,31 @@ namespace Pizza2.Controllers
         {
             this._context = context;
         }
-        public IActionResult Index()
+        public IActionResult Index( )
         {
             if (IsAdmin())
             {
                 return View();
-            } else
-            {
-                return RedirectToAction("Login", "Home");
-            }
-            
-        }
-
-        public IActionResult Create()
-        {
-            if (IsAdmin())
-            {
-                var pizzas = _context.Pizzas.Select(p => p).ToList();
-                return View(pizzas);
             }
             else
             {
-                return RedirectToAction("Login", "Home");
+                return RedirectToAction( "Login", "Home" );
             }
-            
+
+        }
+
+        public IActionResult Create( )
+        {
+            if (IsAdmin())
+            {
+                var pizzas = _context.Pizzas.Select( p => p ).ToList();
+                return View( pizzas );
+            }
+            else
+            {
+                return RedirectToAction( "Login", "Home" );
+            }
+
         }
 
         public IActionResult CreateMenu(List<PizzaViewModel> model)
@@ -43,12 +44,12 @@ namespace Pizza2.Controllers
             if (IsAdmin())
             {
                 //Select highest menuId number + 1
-                string name = model[0].PizzaName;
+                string name = model[ 0 ].PizzaName;
                 int highestId;
 
                 if (_context.Menu.Any())
                 {
-                    highestId = _context.Menu.Max(e => e.menuId);
+                    highestId = _context.Menu.Max( e => e.MenuId );
                     highestId++;
                 }
                 else
@@ -58,57 +59,59 @@ namespace Pizza2.Controllers
 
                 for (int i = 0; i < model.Count(); i++)
                 {
-                    if (model[i].Id == -1)
+                    if (model[ i ].Id == -1)
                     {
                         continue;
                     }
                     else
                     {
-                        _context.Menu.Add(new MenuViewModel()
+                        _context.Menu.Add( new MenuViewModel()
                         {
-                            menuId = highestId,
+                            MenuId = highestId,
                             IsActive = false,
-                            PizzaId = model[i].Id,
+                            PizzaId = model[ i ].Id,
                             MenuItemPosition = i,
-                            menuName = name
-                        });
+                            MenuName = name,
+                            CreationDate = DateTime.Now,
+                            LastModified = DateTime.Now
+                        } );
                     }
 
                 }
 
                 _context.SaveChanges();
 
-                TempData["message"] = "Succesfully created new Menu!";
-                return RedirectToAction(nameof(Index));
+                TempData[ "message" ] = "Succesfully created new Menu!";
+                return RedirectToAction( nameof( Index ) );
             }
             else
             {
-                return RedirectToAction("Login", "Home");
+                return RedirectToAction( "Login", "Home" );
             }
-            
+
         }
-        
-        public IActionResult Activate()
+
+        public IActionResult Activate( )
         {
             if (IsAdmin())
             {
                 List<string> menus = new List<string>();
                 if (_context.Menu.Any())
                 {
-                    menus = _context.Menu.Select(p => p.menuName).Distinct().ToList();
+                    menus = _context.Menu.Select( p => p.MenuName ).Distinct().ToList();
                 }
                 else
                 {
                     menus = new List<string>();
                 }
 
-                return View(menus);
+                return View( menus );
             }
             else
             {
-                return RedirectToAction("Login", "Home");
+                return RedirectToAction( "Login", "Home" );
             }
-            
+
         }
 
         public IActionResult ActivateMenu(List<string> model)
@@ -116,12 +119,12 @@ namespace Pizza2.Controllers
             if (IsAdmin())
             {
                 //Deactivate last menu
-                var activeMenu = _context.Menu.Where(p => p.IsActive == true).Select(p => p).ToList();
+                var activeMenu = _context.Menu.Where( p => p.IsActive == true ).Select( p => p ).ToList();
                 if (activeMenu.Any())
                 {
                     for (int i = 0; i < activeMenu.Count(); i++)
                     {
-                        activeMenu[i].IsActive = false;
+                        activeMenu[ i ].IsActive = false;
                     }
                     _context.SaveChanges();
 
@@ -129,38 +132,39 @@ namespace Pizza2.Controllers
 
 
                 //Activate selected menu
-                string name = model[0];
-                var menu = _context.Menu.Where(p => p.menuName == name).Select(p => p).ToList();
+                string name = model[ 0 ];
+                var menu = _context.Menu.Where( p => p.MenuName == name ).Select( p => p ).ToList();
 
                 if (menu.Any())
                 {
                     for (int i = 0; i < menu.Count(); i++)
                     {
-                        menu[i].IsActive = true;
+                        menu[ i ].IsActive = true;
+                        menu[ i ].LastModified = DateTime.Now;
                     }
                     _context.SaveChanges();
                 }
 
-                TempData["message"] = "Succesfully activated new Menu!";
-                return RedirectToAction(nameof(Index));
+                TempData[ "message" ] = "Succesfully activated new Menu!";
+                return RedirectToAction( nameof( Index ) );
             }
             else
             {
-                return RedirectToAction("Login", "Home");
+                return RedirectToAction( "Login", "Home" );
             }
-            
+
         }
-    
-        public IActionResult Details()
+
+        public IActionResult Details( )
         {
             if (IsAdmin())
             {
                 List<MenuDetailsModel> model = new List<MenuDetailsModel>();
 
                 //Get necesarry list: distinct menus names, menus, and pizzas
-                var menus = _context.Menu.OrderBy(p => p).Select(p => p).ToList();
-                var menusNames = _context.Menu.Select(p => p.menuName).Distinct().ToList();
-                var pizzas = _context.Pizzas.Select(p => p).ToList();
+                var menus = _context.Menu.OrderBy( p => p ).Select( p => p ).ToList();
+                var menusNames = _context.Menu.Select( p => p.MenuName ).Distinct().ToList();
+                var pizzas = _context.Pizzas.Select( p => p ).ToList();
 
                 //for each distinct name
                 foreach (var name in menusNames)
@@ -173,9 +177,9 @@ namespace Pizza2.Controllers
                     {
                         foreach (var pizza in pizzas)
                         {
-                            if (menu.PizzaId == pizza.Id && name == menu.menuName)
+                            if (menu.PizzaId == pizza.Id && name == menu.MenuName)
                             {
-                                x.PizzaNames.Add(pizza.PizzaName);
+                                x.PizzaNames.Add( pizza.PizzaName );
                             }
                             else
                             {
@@ -183,84 +187,84 @@ namespace Pizza2.Controllers
                             }
                         }
 
-                        if (menu.menuName == name)
+                        if (menu.MenuName == name)
                         {
                             x.IsActive = menu.IsActive;
                         }
 
                     }
-                    model.Add(x);
+                    model.Add( x );
                 }
 
 
 
-                return View(model);
+                return View( model );
             }
             else
             {
-                return RedirectToAction("Login", "Home");
+                return RedirectToAction( "Login", "Home" );
             }
-            
+
         }
-    
-        public IActionResult Delete()
+
+        public IActionResult Delete( )
         {
             if (IsAdmin())
             {
                 ItemHolderModel<List<MenuViewModel>> model = new ItemHolderModel<List<MenuViewModel>>();
                 List<MenuViewModel> menusList = new List<MenuViewModel>();
-                var menus = _context.Menu.Where(p => p.IsActive == false).Select(p => p).ToList();
+                var menus = _context.Menu.Where( p => p.IsActive == false ).Select( p => p ).ToList();
 
                 int lastId = 0;
                 for (int i = 0; i < menus.Count(); i++)
                 {
                     if (menusList.Count == 0)
                     {
-                        lastId = menus[i].menuId;
-                        menusList.Add(menus[i]);
+                        lastId = menus[ i ].MenuId;
+                        menusList.Add( menus[ i ] );
                     }
 
-                    if (menus[i].menuId == lastId)
+                    if (menus[ i ].MenuId == lastId)
                     {
                         continue;
                     }
-                    else if (menus[i].menuId != lastId)
+                    else if (menus[ i ].MenuId != lastId)
                     {
-                        lastId = menus[i].menuId;
-                        menusList.Add(menus[i]);
+                        lastId = menus[ i ].MenuId;
+                        menusList.Add( menus[ i ] );
                     }
 
                 }
 
                 model.heldItem = menusList;
 
-                return View(model);
+                return View( model );
             }
             else
             {
-                return RedirectToAction("Login", "Home");
+                return RedirectToAction( "Login", "Home" );
             }
-            
+
         }
 
         public IActionResult DeleteMenu(ItemHolderModel<List<MenuViewModel>> model)
         {
             if (IsAdmin())
             {
-                var menu = _context.Menu.Where(m => m.menuId == model.itemId).Select(m => m).ToList();
-                _context.Menu.RemoveRange(menu);
+                var menu = _context.Menu.Where( m => m.MenuId == model.itemId ).Select( m => m ).ToList();
+                _context.Menu.RemoveRange( menu );
 
                 _context.SaveChanges();
 
-                TempData["message"] = "Sucessfully removed menu from the database";
-                return RedirectToAction(nameof(Index));
+                TempData[ "message" ] = "Sucessfully removed menu from the database";
+                return RedirectToAction( nameof( Index ) );
             }
             else
             {
-                return RedirectToAction("Login", "Home");
+                return RedirectToAction( "Login", "Home" );
             }
         }
 
-        
+
     }
 }

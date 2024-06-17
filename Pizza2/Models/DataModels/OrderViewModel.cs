@@ -9,6 +9,7 @@ namespace Pizza2.Models
         public bool OrderConfirmed { get; set; }
         public string OrderMakerName { get; set; }
         public float? OrderPrice { get; set; }
+        public DateTime? CreationDate { get; set; }
 
         public OrderViewModel()
         {

@@ -44,7 +44,12 @@ namespace Pizza2.Controllers
             {
                 if (!String.IsNullOrWhiteSpace(user.UserName) && !String.IsNullOrWhiteSpace(user.Password))
                 {
+                    user.CreationDate = DateTime.Now;
                     _context.User.Add(user);
+                } else
+                {
+                    TempData[ "error" ] = "One of the fields was left empty";
+                    return RedirectToAction( nameof( Index ) );
                 }
 
                 _context.SaveChanges();

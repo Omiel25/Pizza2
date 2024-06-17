@@ -1,4 +1,4 @@
-﻿@model List<AcceptedOrderModel>
+﻿@model List<OrderDetailsModel>
 <h3>Accepted orders</h3>
 <p>This is page for seeing restaurant accepted orders~~</p>
 @{
@@ -91,7 +91,6 @@
                 // dataTableBody.innerHTML = "";
 
                 data.forEach(order => {
-                    console.log(order);
                     newTable += `
                                         <tr>
                                             <td>${order.orderId}</td>

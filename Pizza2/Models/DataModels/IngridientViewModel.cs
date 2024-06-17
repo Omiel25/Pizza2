@@ -12,6 +12,8 @@ namespace Pizza2.Models
         public int DisplayPriority { get; set; }
         public int ImagePriority { get; set; }
         public bool ContainsMeat { get; set; }
+        public DateTime? CreationDate { get; set; }
+        public DateTime? LastModified { get; set; }
         
         public IngridientViewModel()
         {

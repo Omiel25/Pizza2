@@ -16,5 +16,7 @@ namespace Pizza2.Models
         public int PizzaIngridientListId { get; set; }
 
         public string IngridientListName { get; set; }
+
+        public DateTime? CreationDate { get; set; }
     }
 }

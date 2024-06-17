@@ -67,6 +67,9 @@ namespace Pizza2.Controllers
                     pizza.PizzaPrice = null;
 
                 pizza.IsCustomPizza = false;
+                DateTime creationDate = DateTime.Now;
+                pizza.CreationDate = creationDate;
+                pizza.LastModified = creationDate;
 
                 _context.Pizzas.Add(pizza);
                 _context.SaveChanges();

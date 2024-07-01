@@ -1,9 +1,11 @@
 ﻿@model AddMultipleModel<IngridientViewModel, ItemHolderModel<IngridientViewModel>>
-<h1>Create new List of Ingridients for Pizza</h1>
+
+<h1 class="my-2">Create new List of Ingridients for Pizza</h1>
+<hr class="my-5"/>
 
 <div class="container">
-    <div class="row">
-        <form asp-controller="IngridientsList" asp-action="CreateIngridientsList" method="post">
+    <form asp-controller="IngridientsList" asp-action="CreateIngridientsList" method="post">
+        <div class="row">
             <table class="table table-striped table-dark">
                 <tr>
                     <th scope="col">Position</th>
@@ -11,49 +13,59 @@
                     <th scope="col">Price</th>
                     <th scope="col">Add?</th>
                 </tr>
-            @{
-                int count = 0;
-                foreach(var ingridient in Model.itemTwoList){
-                    <tr>
-                        <td>#@count</td>
-                        @{
-                        if (@ingridient.heldItem.ContainsMeat == true)
-                        {
-                            <td class="text-danger"> <b>@ingridient.heldItem.IngridientName</b> </td>
-                        }
-                        else
-                        {
-                            <td class="text-success"> <b>@ingridient.heldItem.IngridientName</b> </td>
-                        }
-                        }
-
-                        <td>@ingridient.heldItem.IngridientPrice pln</td>
-                        <td> 
-                        @if(ingridient.heldItem.IngridientName.Contains("Sauce", StringComparison.CurrentCultureIgnoreCase ))
-                        {
-                            <input type="radio" name="Sauce" class="form-check-input" value="@ingridient.heldItem.Id">
-                        } else
-                        {
-                            if(ingridient.heldItem.IngridientName == "Pizza Pie"){
-                                <input type="checkbox" name="@ingridient.heldItem.Id" class="form-check-input" value="true" checked readonly>
-                            } else {
-                                <input type="checkbox" name="@ingridient.heldItem.Id" class="form-check-input" value="false">
+                @{
+                    int count = 0;
+                    foreach (var ingridient in Model.itemTwoList)
+                    {
+                        <tr>
+                            <td>#@count</td>
+                            @{
+                                if (@ingridient.heldItem.ContainsMeat == true)
+                                {
+                                    <td class="text-danger"> <b>@ingridient.heldItem.IngridientName</b> </td>
+                                }
+                                else
+                                {
+                                    <td class="text-success"> <b>@ingridient.heldItem.IngridientName</b> </td>
+                                }
                             }
-                            
-                        }
-                        </td>
-                    </tr>
 
-                    count++;
+                            <td>@ingridient.heldItem.IngridientPrice pln</td>
+                            <td>
+                                @if (ingridient.heldItem.IngridientName.Contains( "Sauce", StringComparison.CurrentCultureIgnoreCase ))
+                                {
+                                    <input type="radio" name="Sauce" class="form-check-input" value="@ingridient.heldItem.Id">
+                                }
+                                else
+                                {
+                                    if (ingridient.heldItem.IngridientName == "Pizza Pie")
+                                    {
+                                        <input type="checkbox" name="@ingridient.heldItem.Id" class="form-check-input" value="true" checked readonly>
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" name="@ingridient.heldItem.Id" class="form-check-input" value="false">
+                                    }
+
+                                }
+                            </td>
+                        </tr>
+
+                        count++;
+                    }
                 }
-            }
             </table>
+        </div>
 
-            <label class="form-label mb-3" for="ingridientListName">Ingridient List Name</label>
-            <input type="text" name="ingridientListName" class="form-input" />
+        <div class="row mb-3">
+            <div class="input-group">
+                <span class="input-group-text"><b>Ingridient List Name</b></span>
+                <input type="text" name="ingridientListName" class="form-control" required />
+            </div>
+        </div>
 
-            <button type="submit" class="btn btn-primary my-2">Save</button>
-
-        </form>
-    </div>
+        <div class="row my-2">
+            <button type="submit" class="btn btn-success my-2">Create Ingridient List</button>
+        </div>
+    </form>
 </div>

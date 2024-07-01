@@ -1,39 +1,66 @@
 ﻿@model TwoItemsModel<IngridientViewModel, string>
+@section Scripts
+{
+    <script src="@Url.Content("~/js/GroupTextWidthRegulation.js")" type="text/javascript" defer></script>
+}
 
-@{
-    <h1>Create Ingridient</h1>
+<h1 class="my-2">Create Ingridient</h1>
+<hr class="my-5"/>
 
-    <div class="row my-2">
-        <div class="col-6">
-            <form asp-controller="Ingridients" asp-action="CreateIngridient" method="post">
+<div class="container">
+    <form asp-controller="Ingridients" asp-action="CreateIngridient" method="post">
 
-                <div>
-                    <label class="form-label mb-3">Ingridient Name</label>
+        <div class="row">
+            <div class="col">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Ingridient Name</span>
                     <input asp-for=itemOne.IngridientName type="text" class="form-control" />
                 </div>
+            </div>
+        </div>
 
-                <div>
-                    <label class="form-label mb-3">Ingridient Price</label>
+        <div class="row">
+            <div class="col">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Ingridient Price</span>
                     <input asp-for=itemTwo type="number" class="form-control" min="0" step="0.01" />
                 </div>
+            </div>
+        </div>
 
-                <div>
-                    <label class="form-label mb-3">Ingridient Display Priority</label>
+        <div class="row">
+            <div class="col">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Ingridient Display Priority</span>
                     <input asp-for=itemOne.DisplayPriority type="number" class="form-control" />
                 </div>
+            </div>
+        </div>
 
-                <div>
-                    <label class="form-label mb-3">Image Display Priority</label>
+        <div class="row">
+            <div class="col">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Image Display Priority</span>
                     <input asp-for=itemOne.ImagePriority type="number" class="form-control" />
                 </div>
-
-                <div>
-                    <label class="form-label mb-3 my-2">Does Ingridient contain meat?</label>
-                    <input asp-for=itemOne.ContainsMeat type="checkbox" class="form-check-input" />
-                </div>
-
-                <button type="submit" class="btn btn-primary">Save</button>
-            </form>
+            </div>
         </div>
-    </div>
-}
+
+        <div class="row">
+            <div class="col">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Does Ingridient contain meat? - </span>
+                    <div class="input-group-text">
+                        <input asp-for=itemOne.ContainsMeat type="checkbox" class="form-check-input mt-0" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">Create Ingridient</button>
+    </form>
+</div>
+
+
+
+

@@ -134,7 +134,7 @@ namespace Pizza2.Controllers
                     }
 
                     if (automaticPrice != 0f)
-                        pizzaData.customData = $"{automaticPrice}";
+                        pizzaData.customData = automaticPrice.ToString("0.00");
                     model.Add( pizzaData );
                 }
 

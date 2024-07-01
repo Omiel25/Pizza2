@@ -1,6 +1,6 @@
 ﻿@model List<ItemListHolderModel<PizzaViewModel, string>>
 
-<h2>Pizzas Details</h2>
+<h2 class="my-4">Pizzas Details</h2>
 <div class="container">
     <table class="table table-striped table-dark">
         <tr>
@@ -13,21 +13,21 @@
     @{
         int pizzaCount = 0;
         foreach(var item in Model){
-            <tr>
+            <tr class="text-start">
                 @{
                     int ingridientCount = 0;
                 }
                 <td>@pizzaCount</td>
                 <td>@item.ItemA.PizzaName</td>
                 <td>@item.ItemB</td>
-                <td>
+                <td >
                 @foreach(var ingridient in item.ItemsB)
                 {
                     if(ingridientCount == 0){
                         <span>@ingridient</span>
                     } else 
                     {
-                        <span>, @ingridient </span>
+                        <span>, @ingridient</span>
                     }
                     ingridientCount++;
                 }
@@ -36,9 +36,10 @@
                     @if(item.ItemA.PizzaPrice == null)
                     {
                         <span><b>AUTO: </b> @item.customData <b> PLN</b></span>
-                    } else
+                    } 
+                    else
                     {
-                        @item.ItemA.PizzaPrice
+                        @item.ItemA.PizzaPrice <b> PLN</b>
                     }
                     </td>
 

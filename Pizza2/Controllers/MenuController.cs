@@ -29,7 +29,7 @@ namespace Pizza2.Controllers
         {
             if (IsAdmin())
             {
-                var pizzas = _context.Pizzas.Select( p => p ).ToList();
+                var pizzas = _context.Pizzas.Where(p => !p.IsCustomPizza).Select( p => p ).ToList();
                 return View( pizzas );
             }
             else

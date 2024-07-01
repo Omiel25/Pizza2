@@ -1,8 +1,8 @@
 ﻿@model List<string>
 
 
-<h2>Avalible Menus</h2>
-<div class="my-3">
+<h2>Available Menus</h2>
+<div class="my-3 container">
     @{
         if (Model.Count >= 1)
         {
@@ -15,7 +15,7 @@
                     <option value="_null_pizza_">-No menus avalible-</option>
                 </select>
 
-                <button type="submit" class="btn btn-success my-2">Activate</button>
+                <button type="submit" class="btn btn-success my-3">Activate</button>
             </form>
         }
         else

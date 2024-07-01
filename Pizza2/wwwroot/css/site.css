@@ -68,7 +68,7 @@ div h1{
 }
 
 .text-special {
-    font-family: 'Dancing Script', cursive;
+    font-family: 'Pixelify Sans', cursive;
     margin: 0px 2vw;
 }
 
@@ -164,4 +164,12 @@ menu-container img {
     position: relative;
     left: 0;
     top: 0;
+}
+
+.card-group span {
+    font-family: 'Pixelify Sans', sans-serif;
+}
+
+#menu-container {
+    font-family: 'Pixelify Sans', sans-serif;
 }

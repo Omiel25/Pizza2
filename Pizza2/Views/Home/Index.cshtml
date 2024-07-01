@@ -4,5 +4,149 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome to the Pizzeria App Panel!</h1>
-    <p>Select one of the options form the panel above~ </p>
+    <p>Be sure to read instructions below</p>
+    </hr>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="card text-black">
+                    <h5 class="card-header text-white">1.Create Ingridients</h5>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="#">Create ingridients</a> that will be used to create ingridient list for your products.
+                        </h5>
+                        <p class="card-text">What you need to do is to give it:</p>
+                    </div>
+                    <ul class="list-group list-group-flush text-start">
+                        <li class="list-group-item">
+                            <b>Name</b> - unique name that will be used durning: ingridient list creation, custom pizza creation for clients, searching for ingridient image.
+                        </li>
+                        <li class="list-group-item">
+                            <b>Price</b> - that will be used for automatic pizza price calculation and durning custom pizza creation for clients.
+                        </li>
+                        <li class="list-group-item">
+                            <b>Display Priority</b> - indicates order in which ingridients will show for pizzas in menu.
+                        </li>
+                        <li class="list-group-item">
+                            <b>Image Priority</b> - indicates order in which to put ingridient image durning pizza image creaton.
+                        </li>
+                        <li class="list-group-item rounded-circle">
+                            <b>Contains Meat</b> - indicates if ingridient contains meat.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card text-black">
+                    <h5 class="card-header text-white">2.Create Ingridient List</h5>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="">Create Ingridient List</a> that will be used in pizza creation to indicate what ingridients are used for created product.
+                        </h5>
+                        <p class="card-text">What you need to do is to:</p>
+                    </div>
+                    <ul class="list-group list-group-flush text-start">
+                        <li class="list-group-item">
+                            <b>Select ingridients</b> that will be contained in your list.
+                        </li>
+                        <li class="list-group-item rounded-circle">
+                            <b>Give it unique name</b>, preferably indicating the name of the pizza it will be used for.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card text-black">
+                    <h5 class="card-header text-white">3.Create Pizzas</h5>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="">Create Pizzas</a> that we will put in our menu.
+                        </h5>
+                        <p class="card-text">What you need to do is:</p>
+                    </div>
+                    <ul class="list-group list-group-flush text-start">
+                        <li class="list-group-item">
+                            <b>Give it unique name</b> that will be shown in our menu.
+                        </li>
+                        <li class="list-group-item">
+                            <b>Choose if price should be calculated automaticly</b> - if yes then the price will be based on the current ingridient price,
+                            otherwise you need to set static price by yourself.
+                        </li>
+                        <li class="list-group-item rounded-circle">
+                            <b>Select Ingridients List</b> that contains ingridients used in the pizza we are creating.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col">
+                <div class="card text-black">
+                    <h5 class="card-header text-white">4.Create Menu</h5>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="">Create Menu</a> that will be abalible for the clients.
+                        </h5>
+                        <p class="card-text">What you need to do is:</p>
+                    </div>
+                    <ul class="list-group list-group-flush text-start">
+                        <li class="list-group-item">
+                            <b>Select Pizzas</b> in order that will be shown in our menu, blank field won't be used durnig menu creation.
+                        </li>
+                        <li class="list-group-item rounded-circle">
+                            <b>Give unique name</b> to the menu we are creating.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card text-black">
+                    <h5 class="card-header text-white">5.Activate Menu</h5>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="">Choose and Activate</a> which one of the Menus that we created will be used and shown to the client.
+                        </h5>
+                        <p class="card-text">What you need to do is:</p>
+                    </div>
+                    <ul class="list-group list-group-flush text-start">
+                        <li class="list-group-item rounded-circle">
+                            <b>Select one of the Menus we created</b> to the menu we are creating.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script type="text/javascript" defer>
+    let rows = document.querySelectorAll(".row");
+    let rowsTopHeights = [];
+
+    rows.forEach(row => {
+        let cards = row.querySelectorAll(".card");
+        let topHeight = -1;
+        cards.forEach(card => {
+            let cardHeight = card.getBoundingClientRect().height;
+            if (cardHeight > topHeight) {
+                topHeight = cardHeight;
+            }
+        });
+
+        rowsTopHeights.push(topHeight);
+    });
+
+    let count = 0;
+    rows.forEach(row => {
+        let cards = row.querySelectorAll(".card");
+
+        cards.forEach(card => {
+            cards.forEach(card => {
+                card.style.height = rowsTopHeights[count] + "px";
+            });
+        });
+
+        count++;
+    });
+
+</script>

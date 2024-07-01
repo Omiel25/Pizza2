@@ -1,4 +1,8 @@
 ﻿@model AvalibleMenuModel
+@section Scripts
+{
+    <script src="@Url.Content("~/js/GroupTextWidthRegulation.js")" type="text/javascript" defer></script>
+}
 
 @{
     //Layout is avalible fo displaying shared views
@@ -20,17 +24,21 @@
 }
 
 <div class="text-center container">
-
     <h3 class="text-special main-quote">Something more than just a pizz@@~</h3>
-    <form asp-controller="Home" asp-action="Order" method="post" id="pizza-cart"class="my-4">
+    <form asp-controller="Home" asp-action="Order" method="post" id="pizza-cart" class="my-4">
         <div id="cart-container">
             <!--Place for pizzas added via JS QQ-->
         </div>
-        <span id="order-count"> 0 </span>
+        <span id="order-count"> - cart is empty - </span>
         <button type="submit" class="icon-container">
             <img id="shopping-cart-icon" src="~/images/ShoppingCart.png" />
         </button>
     </form>
+    <div class="row text-special">
+        <hr class="my-3"/>
+        <p>We take extra special care to ensure that all of your need are met when it comes to preparing the most amazing fish you have ever tasted</p>
+        <p>Our every pizza measure <b>46cm</b> in width, contains only the <b>freshest</b> of ingridients and is made with lost of dediaction and <b>passion</b>.</p>
+    </div>
 </div>
 
 
@@ -39,15 +47,16 @@
 </div>
 
 
-<div class="container menu-container">
+<div class="container menu-container" id="menu-container">
     <div class="row text-center">
 
-        <div class="row my-4">
-            <div class="col-12 pizza-container-header text-center text-special" id="pizza-header-container">
-                <h4>Create your own custom pizza!</h4>
-            </div>
+        <div class="col-12 pizza-container-header text-center text-special" id="pizza-header-container">
+            <h4 class="my-3">Create your own custom pizza!</h4>
+        </div>
 
-            <div class="col-4" id="custom-pizza-images">
+        <div class="row my-4">
+
+            <div class="col-3" id="custom-pizza-images">
                 @for (int i = 0; i < ingridientCount; i++)
                 {
                     string ingridientName = Model?.Ingridients?[ i ].IngridientName ?? "error";
@@ -69,61 +78,85 @@
                 }
             </div>
 
-            <div class="col-5" id="custom-pizza-ingridients">
+            <div class="col-6" id="custom-pizza-ingridients">
                 <div class="row py-1">
                     @foreach (var sauce in Model.Sauces)
                     {
-                        <div class="col-4">
-                            <label class="form-check-label" for="Sauce">
-                                @sauce.IngridientName
-                                <input type="radio" name="Sauce" value="@sauce.IngridientName" id="@sauce.IngridientName" class="form-check-input">
-                            </label>
+                        <div class="col">
+                            <div class="input-group mb-1">
+                                <span class="input-group-text">@sauce.IngridientName - </span>
+                                <div class="input-group-text">
+                                    <input type="radio" name="Sauce" value="@sauce.IngridientName" id="@sauce.IngridientName" class="form-check-input mt-0">
+                                </div>
+                            </div>
                         </div>
                     }
                 </div>
 
                 <div class="row py-1">
                     <div class="col">
-                        <label class="form-check-label" for="Pie">
-                            Classic Pizza Pie
-                            <input type="radio" name="Pie" value="@Model.Pies[0].IngridientName" id="Pizza Pie" class="form-check-input" checked>
-                        </label>
+                        <div class="input-group mb-1">
+                            <span class="input-group-text">@Model.Pies[ 0 ].IngridientName - </span>
+                            <div class="input-group-text">
+                                <input type="radio" name="Pie" id="@Model.Pies[ 0 ].IngridientName" class="form-check-input mt-0" checked>
+                            </div>
+                        </div>
                     </div>
                     @foreach (var pie in Model.Pies)
                     {
+                        if(pie.IngridientName == "Pizza Pie")
+                        {
+                            continue;
+                        }
+
                         <div class="col">
-                            <label class="form-check-label" for="Pie">
-                                @pie.IngridientName
-                                <input type="radio" name="Pie" value="@pie.IngridientName" id="@pie.IngridientName" class="form-check-input">
-                            </label>
+                            <div class="input-group mb-1">
+                                <span class="input-group-text">@pie.IngridientName - </span>
+                                <div class="input-group-text">
+                                    <input type="radio" name="Pie" value="@pie.IngridientName" id="@pie.IngridientName" class="form-check-input mt-0">
+                                </div>
+                            </div>
                         </div>
                     }
                 </div>
 
-                <div class="row justify-content-start py-1">
+                <div class="row mb-1">
                     @foreach (var ingridient in Model.ClassicIngridients)
                     {
-                        <div class="col-4">
-                            <span> @ingridient.IngridientName </span>
-                            <input type="checkbox" name="@ingridient.IngridientName" value="@ingridient.IngridientName" id="@ingridient.IngridientName" class="form-check-input">
+                        <div class="col-6">
+                            <div class="input-group mb-1">
+                                <span class="input-group-text">@ingridient.IngridientName - </span>
+                                <div class="input-group-text">
+                                    <input type="checkbox" name="@ingridient.IngridientName" value="@ingridient.IngridientName" id="@ingridient.IngridientName" class="form-check-input mt-0">
+                                </div>
+                            </div>
                         </div>
                     }
                 </div>
             </div>
 
-            <div class="col-2 my-3" id="custom-pizza-form-container">
-                <p id="custom-pizza-price">@startingPrice PLN</p>
+            <div class="col-3 my-3" id="custom-pizza-form-container">
+                <div class="input-group mb-3" id="custom-pizza-visible-price">
+                    <span class="input-group-text"><b>Price:</b></span>
+                    <span class="input-group-text" id="custom-pizza-price">@startingPrice PLN</span>
+                </div>
+                
                 <div id="custom-pizza-form">
                     <div id="custom-pizza-form-ingridients">
 
                     </div>
-                    <input type="text" name="pizza-name" value="Custom Pizza" id="pizza-name" class="form-control my-1" />
+
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><b>Pizza Name</b>: </span>
+                        <input type="text" name="pizza-name" value="Custom Pizza" id="pizza-name" class="form-control my-1" />
+                    </div>
+
                     <input type="text" name="pizza-price" value="@startingPrice" id="custom-pizza-price-input" hidden/>
                     <button id="add-custom-pizza-btn" class="btn btn-success my-2">Add pizza to the cart</button>
                 </div>
             </div>
 
-            <hr />
+            <hr class="my-3" />
         </div>
         @if(Model?.Pizzas != null)
         {
@@ -170,11 +203,11 @@
                             {
                                 if (i + 1 == pizzaHolder.PizzaIngridients.Count())
                                 {
-                                    <span class="py-3">@pizzaHolder.PizzaIngridients[ i ].IngridientName</span>
+                                    <span class="py-3 align-middle">@pizzaHolder.PizzaIngridients[ i ].IngridientName</span>
                                 }
                                 else
                                 {
-                                    <span class="py-3">@pizzaHolder.PizzaIngridients[ i ].IngridientName, </span>
+                                    <span class="py-3 align-middle">@pizzaHolder.PizzaIngridients[ i ].IngridientName, </span>
                                 }
                             }
                         }
@@ -183,7 +216,7 @@
                     <div class="col-3 pizza-buttons text-center">
                         <div class="row">
                             <div class="col-12 py-3">
-                                <span>@pizzaHolder.Pizza.PizzaPrice PLN</span>
+                                <h4>@pizzaHolder.Pizza.PizzaPrice PLN</h4>
                             </div>
                             <div class="col-12 py-3" name="data-container">
                                 <input type="number" value="@pizzaHolder.Pizza.Id" id="data" hidden>
@@ -213,6 +246,7 @@
 
     var cartSizeCount = 0;
 
+    //Add pizzas to cart - event
     dataContainer.forEach((container, index) => {
         var btn = container.querySelector("#add-to-cart-btn");
         var data = container.querySelector("#data");
@@ -243,70 +277,14 @@
     });
     //----------- END Shopcart_Script -----------
 
-    //----------- BEGIN Pizza_Img_Creation -----------
-    let imageContainer = document.getElementsByName("pizza-image-container");
-    let customPizzaImagesContainer = document.querySelectorAll("#custom-pizza-images");
+    ResizePizzaImages();
 
-    let leftPosition = 0;
-    let topPosition = 0;
-    let zPosition = 1;
-
-    if (document.readyState) {
-        imageContainer.forEach(container => {
-            console.log("Container height: " + containerHeight);
-            console.log("containerRect.bottom: " + containerRect.bottom);
-            console.log("containerRect.top: " + containerRect.top);
-            let containerRect = container.getBoundingClientRect();
-            let containerHeight = containerRect.bottom - containerRect.top;
-
-            let images = container.querySelectorAll("img");
-
-            images.forEach(image => {
-                if (zPosition == 1) {
-
-                    leftPosition = containerRect.left;
-                    topPosition = containerRect.top;
-
-                    image.style = `position:absolute; left:${leftPosition}; top:${topPosition}; height:${containerHeight}px;`;
-                    image.style.zIndex = zPosition;
-                } else {
-                    image.style = `position:absolute; left:${leftPosition}; top:${topPosition}; height:${containerHeight}px;`;
-                    image.style.zIndex = zPosition;
-                }
-                zPosition++;
-            });
-        });
-
-        customPizzaImagesContainer.forEach(container => {
-            let containerRect = container.parentElement.getBoundingClientRect();
-            let containerHeight = containerRect.bottom - containerRect.top;
-
-            let images = container.querySelectorAll("img");
-
-            images.forEach(image => {
-                if (zPosition == 1) {
-
-                    leftPosition = containerRect.left;
-                    topPosition = containerRect.top;
-
-                    image.style = `position:absolute; left:${leftPosition}; top:${topPosition}; height:${containerHeight}px;`;
-                    image.style.zIndex = zPosition;
-                } else {
-                    image.style = `position:absolute; left:${leftPosition}; top:${topPosition}; height:${containerHeight}px;`;
-                    image.style.zIndex = zPosition;
-                }
-                zPosition++;
-            });
-        });
-    }
-    //----------- END Pizza_Creation -----------
-
-    //------------------------------------------
     let customPizzaImages = document.querySelectorAll("#custom-pizza-images .pizza-ingridient-image");
     let customPizzaInputs = document.querySelectorAll("#custom-pizza-ingridients input");
     let customPizzaForm = document.querySelector("#custom-pizza-form-container #custom-pizza-form");
 
     let customPizzaIngridients = [];
+    ResizePizzaImages();
 
     //Set all ingridients visibility to hidden
     customPizzaImages.forEach(image => {
@@ -380,13 +358,15 @@
                 }
             });
 
-            let customPizzaPrice = document.querySelector("#custom-pizza-form-container #custom-pizza-price");
+            let customPizzaPrice = document.querySelector("#custom-pizza-form-container #custom-pizza-visible-price");
             let customPizzaPriceInput = document.querySelector("#custom-pizza-form-container #custom-pizza-price-input");
 
             pizzaPrice = (Math.round(pizzaPrice * 100) / 100).toFixed(2);
 
-            customPizzaPrice.innerHTML = `<span class='py-2'> Price: ${pizzaPrice} PLN</span>`;
+            customPizzaPrice.innerHTML = `<span class="input-group-text"><b>Price:</b></span>
+                        <span class="input-group-text" id="custom-pizza-price">${pizzaPrice} PLN</span>`;
 
+            //Adjust spans inside?
             customPizzaPriceInput.value = pizzaPrice;
         });
     });
@@ -431,11 +411,65 @@
         });
     }
 
-    customPizzaFormButton.addEventListener("click", AddCustomPizza);
-    /*
-    1.Get ID of the input
-    2.Get img with the same id
-    3.Make img hidden/visible
-    */
+    function ResizePizzaImages() {
+        let imageContainer = document.getElementsByName("pizza-image-container");
+        let customPizzaImagesContainer = document.getElementById("custom-pizza-images");
 
+        let containetLeftPosition = customPizzaImagesContainer.getBoundingClientRect().left;
+        let leftPosition = 0;
+        let topPosition = 0;
+        let zPosition = 1;
+
+        //Normal Pizzas image adjusting
+        imageContainer.forEach(container => {
+            let containerRect = container.parentElement.getBoundingClientRect();
+            let containerHeight = containerRect.bottom - containerRect.top;
+
+            let images = container.querySelectorAll("img");
+
+            images.forEach(image => {
+                if (zPosition == 1) {
+
+                    leftPosition = containerRect.left - (containerRect.left * 0.50);
+
+                    image.style = `position:absolute; left:${leftPosition}px; height:${containerHeight}px;`;
+                    image.style.zIndex = zPosition;
+                } else {
+                    image.style = `position:absolute; left:${leftPosition}px; height:${containerHeight}px;`;
+                    image.style.zIndex = zPosition;
+                }
+                zPosition++;
+            });
+        });
+
+        AdjustCustomImages(customPizzaImagesContainer);
+    }
+
+    //Custom pizza images adjusting
+    function AdjustCustomImages(container) {
+        let containerParentRect = container.parentElement.getBoundingClientRect();
+        let containerHeight = containerParentRect.bottom - containerParentRect.top;
+
+        let images = container.querySelectorAll("img");
+
+        let zPosition = 1;
+
+        images.forEach(image => {
+            if (zPosition == 1) {
+
+                leftPosition = containerParentRect.left;
+                topPosition = containerParentRect.top;
+
+                image.style = `position:absolute; left:${leftPosition}px; top:${topPosition}; height:${containerHeight}px;`;
+                image.style.zIndex = zPosition;
+            } else {
+                image.style = `position:absolute; left:${leftPosition}px; top:${topPosition}; height:${containerHeight}px;`;
+                image.style.zIndex = zPosition;
+            }
+            zPosition++;
+        });
+    }
+
+    //On window resize change custom pizza image placement
+    customPizzaFormButton.addEventListener("click", AddCustomPizza);
 </script>

@@ -1,55 +1,68 @@
 ﻿@model AddMultipleModel<PizzaViewModel, Dictionary<int,string>>
+@section Scripts
+{
+    <script src="@Url.Content("~/js/GroupTextWidthRegulation.js")" type="text/javascript" defer></script>
+}
 
-<h1>Create Pizza</h1>
+<h1 class="my-2">Create Pizza</h1>
+<hr class="my-5"/>
 
 <div class="container">
     <form asp-controller="Pizza" asp-action="CreatePizza" method="post">
 
-        <div class="row">
+        <div class="row my-3">
             <div class="col">
-                <label class="form-label mb-3">Pizza Name</label>
-                <input asp-for=itemOne.PizzaName type="text" class="form-control" placeholder="ex.Carbonara" required/>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Pizza Name</span>
+                    <input asp-for=itemOne.PizzaName type="text" class="form-control" placeholder="ex.Carbonara" required />
+                </div>
             </div>
         </div>
         
-        <div class="row">
-            <div class="col form-check form-check-inline">
-                <p class="form-label mb-3"> Automaticly calculate pizza price? </p>
+        <div class="row my-3">
+            <div class="input-group mb-3">
+                <span class="input-group-text">Automaticly calculate pizza price?</span>
 
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input auto-price" name="inlineCheckbox" type="radio" id="inlineCheckbox" value="1">
-                    <label class="form-check-label" for="inlineCheckbox1">Yes</label>
+                <span class="input-group-text">Yes </span>
+                <div class="input-group-text">
+                    <input class="form-check-input mt-0 auto-price" name="inlineCheckbox" type="radio" id="inlineCheckbox" value="1">
                 </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input auto-price" name="inlineCheckbox" type="radio" id="inlineCheckbox" value="0">
-                    <label class="form-check-label" for="inlineCheckbox2">No</label>
+                
+
+                <span class="input-group-text">No </span>
+                <div class="input-group-text">
+                    <input class="form-check-input mt-0 auto-price" name="inlineCheckbox" type="radio" id="inlineCheckbox" value="0">
                 </div>
+
             </div>
         </div>
 
         <div class="row my-3">
-            <span class="col-12">Pizza Price</span>
-            <div class="input-group align-bottom">
+            <div class="input-group mb-3">
+                <span class="input-group-text">Pizza Price</span>
                 <input asp-for=itemTwo type="number" class="form-control" id="set-price" min="0" step="0.01" placeholder="19.99" />
             </div>
         </div>
 
-        <div class="row">
+        <div class="row my-3">
             <div class="col">
-                <label class="form-label mb-3 my-3">Pizza Ingridients list ID</label>
-                <select asp-for=itemOne.IngridientsListId class="form-select">
-                    @{
-                        foreach (var ingridients in Model.itemTwo)
-                        {
-                            <option value="@ingridients.Key">@ingridients.Key - @ingridients.Value</option>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Pizza Ingridients list ID</span>
+                    <select asp-for=itemOne.IngridientsListId class="form-control">
+                        @{
+                            foreach (var ingridients in Model.itemTwo)
+                            {
+                                <option value="@ingridients.Key">@ingridients.Key - @ingridients.Value</option>
+                            }
                         }
-                    }
-                </select>
+                    </select>
+                </div>
+                
             </div>
         </div>
 
-        <div class="row">
-            <button type="submit" class="btn btn-primary my-2">Save</button>
+        <div class="row my-3">
+            <button type="submit" class="btn btn-success my-2">Create Pizza</button>
         </div>
 
     </form>

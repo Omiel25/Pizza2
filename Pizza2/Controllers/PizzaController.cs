@@ -147,6 +147,122 @@ namespace Pizza2.Controllers
             
         }
 
+        public IActionResult Edit( )
+        {
+            //Initiate List Holder
+            List<ItemListHolderModel<PizzaViewModel, string>> model = new List<ItemListHolderModel<PizzaViewModel, string>>();
+
+            List<PizzaViewModel> pizzas = _context.Pizzas.Where( p => p.IsCustomPizza == false ).ToList();
+
+            foreach (PizzaViewModel pizza in pizzas)
+            {
+                ItemListHolderModel<PizzaViewModel, string> pizzaData = new ItemListHolderModel<PizzaViewModel, string>();
+                pizzaData.ItemsB = new List<string>();
+                pizzaData.ItemA = pizza;
+
+                float automaticPrice = 0f;
+
+                //Get list of ingridnets names for target pizza and fill our model with it
+                var query = from list in _context.PizzaIngridients
+                            join i in _context.Ingridients on list.IngridientId equals i.Id
+                            orderby i.DisplayPriority ascending
+                            select new
+                            {
+                                ingridientListId = list.PizzaIngridientListId,
+                                ingridientListName = list.IngridientListName,
+                                ingridientName = i.IngridientName,
+                                ingridientPrice = i.IngridientPrice
+                            };
+
+                foreach (var ingridient in query)
+                {
+                    if (ingridient.ingridientListId == pizza.IngridientsListId)
+                    {
+                        pizzaData.ItemsB.Add( ingridient.ingridientName );
+
+                        if (pizza.PizzaPrice == null)
+                            automaticPrice += ingridient.ingridientPrice;
+                    }
+                }
+
+                foreach (var ingridient in query)
+                {
+                    if (ingridient.ingridientListId == pizza.IngridientsListId)
+                    {
+                        pizzaData.ItemB = $"{ingridient.ingridientListId} - {ingridient.ingridientListName}";
+                        break;
+                    }
+                }
+
+                if (automaticPrice != 0f)
+                    pizzaData.customData = automaticPrice.ToString( "0.00" );
+                model.Add( pizzaData );
+            }
+
+            return View( model );
+        }
+
+        public IActionResult EditPizza(IFormCollection form)
+        {
+            if (!IsAdmin())
+            {
+                SetErrorMessage( "Insufficent privilages" );
+                return RedirectToAction( "Login", "Home" );
+            }
+            PizzaViewModel tempPizza = new PizzaViewModel();
+            bool autoPrice = false;
+
+            foreach(var input in form)
+            {
+                if(input.Key.Contains("pizza", StringComparison.OrdinalIgnoreCase ))
+                {
+                    string inputName = input.Key.Replace( "pizza", "", StringComparison.OrdinalIgnoreCase );
+                    switch(inputName)
+                    {
+                        case "Id":
+                            tempPizza.Id = int.Parse( input.Value );
+                            break;
+                        case "AutoPrice":
+                            autoPrice = true;
+                            break;
+                        case "Price":
+                            string textPrice = input.Value;
+                            textPrice = textPrice.Replace( ".", "," );
+                            if (float.TryParse( textPrice, out float pizzaPrice ))
+                            {
+                                tempPizza.PizzaPrice = pizzaPrice;
+                            }
+                            break;
+                        case "Name":
+                            tempPizza.PizzaName = input.Value;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            PizzaViewModel? targetPizza = _context.Pizzas.Where( p => p.Id == tempPizza.Id ).FirstOrDefault();
+            if(targetPizza == null)
+            {
+                SetErrorMessage( "Couldn't find changed pizza" );
+                return RedirectToAction( "Login", "Home" );
+            }
+
+            _context.Pizzas.Attach( targetPizza );
+            targetPizza.PizzaName = tempPizza.PizzaName;
+            if (autoPrice)
+                targetPizza.PizzaPrice = null;
+            else
+                targetPizza.PizzaPrice = tempPizza.PizzaPrice;
+
+            _context.Pizzas.Update( targetPizza );
+            _context.SaveChanges();
+
+            SetMessage( "Successfully edited pizza" );
+            return RedirectToAction( nameof( Index ) );
+        }
+
         public IActionResult Delete()
         {
             if (IsAdmin())

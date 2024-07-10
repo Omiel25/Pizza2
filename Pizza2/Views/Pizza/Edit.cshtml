@@ -1,42 +1,115 @@
-﻿@model AddMultipleModel<PizzaViewModel, int>
+﻿@model List<ItemListHolderModel<PizzaViewModel, string>>
+@{
+    int count = 0;
+    int ingridientCount = 0;
+}
 
-<h2>Pizzas</h2>
+<h1 class="my-2">Edit Pizzas</h1>
+<hr class="my-5" />
 
-<div class="container my-2 text-center">
-    <div class="row border border-dark">
-        <div class="col border border-success p-0">
-            <table class="table table-dark table-striped m-0">
-                <tr>
-                    <th scope="col"> <h4>#</h4> </th>
-                    <th scope="col"> <h4>Name</h4> </th>
-                    <th scope="col"> <h4>Price</h4> </th>
-                    <th scope="col"> <h4>Confrim Change</h4> </th>
+<div class="container">
+    <div class="row">
+        <table class="table table-striped table-dark">
+            <tr>
+                <th scope="col"> <h4>#</h4> </th>
+                <th scope="col"> <h4>Name</h4> </th>
+                <th scope="col"> <h4>Ingridients List ID</h4> </th>
+                <th scope="col"> <h4>Ingridients</h4> </th>
+                <th scope="col"> <h4>Auto. Price</h4></th>
+                <th scope="col"> <h4>Price</h4> </th>
+                <th scope="col"> <h4><b>Update</b></h4></th>
+            </tr>
+            @foreach(var pizza in Model)
+            {
+            <form asp-controller="Pizza" asp-action="EditPizza" method="post">
+                <tr class="py-3"> 
+                    <td>
+                        #@count
+                        <input type="number" name="pizzaId" value="@pizza.ItemA.Id" hidden readonly />
+                    </td> 
+                    <td>
+                        <input type="text" name="pizzaName" value="@pizza.ItemA.PizzaName" />
+                    </td>
+                    <td>@pizza.ItemA.IngridientsListId</td>
+                    <td>
+                        <span class="input-group-text">
+                                @{
+                                    ingridientCount = 0;
+                                    foreach (var ingridient in pizza.ItemsB)
+                                    {
+                                        if (ingridientCount == 0)
+                                        {
+                                                                <span>@ingridient</span>
+                                        }
+                                        else
+                                        {
+                                                                <span>, @ingridient</span>
+                                        }
+                                        ingridientCount++;
+                                    }
+                                }
+                        </span>
+                    </td>
+                    <td>
+                        <div class="text-center mb-3" id="@pizza.ItemA.Id">
+                            @if(pizza.ItemA.PizzaPrice == null)
+                            {
+                                <input class="form-check-input mt-0 auto-price" name="pizzaAutoPrice" type="checkbox" checked>
+                            } else {
+                                <input class="form-check-input mt-0 auto-price" name="pizzaAutoPrice" type="checkbox">
+                            }
+                        </div>
+                    </td>
+                        @{
+                            string pizzaPriceId = $"pizzaPrice{pizza.ItemA.Id}";
+                        }
+                    <td id=@pizzaPriceId>
+                        @if(pizza.ItemA.PizzaPrice == null)
+                        {
+                        <div class="input-group">
+                            <input type="text" class="form-control pizzaPriceInput" name="pizzaPrice" value="AUTO" placeholder="19.99" readonly/>
+                        </div>
+                        } else
+                        {
+                        <div class="input-group">
+                            <input type="text" class="form-control pizzaPriceInput" name="pizzaPrice" value="@pizza.ItemA.PizzaPrice" placeholder="19.99" />
+                        </div>
+                        }
+                    </td>
+                    <td>
+                        <button type="submit" class="btn btn-warning my-2">Edit</button>
+                    </td>
                 </tr>
-                @{
-                    int count = 0;
-                }
-                @foreach(var pizza in Model.itemOneList){
-                    <tr>
-                        <td> @count </td>
-                        <form asp-controller="Pizza" asp-action="EditPizza" method="post">
-                            <td>
-                                <input asp-for=@Model.itemOne.PizzaName type="text" value="@pizza.PizzaName">
-                            </td>
-                            <td>
-                                <div class="row">
-                                    <input asp-for=@Model.itemTwoList[0] type="number" value="@pizza.PizzaName">
-                                    <span>.</span>
-                                    <input asp-for=@Model.itemTwoList[1] type="number" value="@pizza.PizzaName">
-                                </div>
-                            </td>
-                            <td>
-                                <button type="submit" class="btn btn-danger">Change</button>
-                            </td>
-                        </form>
-                    </tr>
-                }
-
-            </table>
-        </div>
+            </form>
+                
+            count++;
+            }
+        </table>
     </div>
 </div>
+
+<script type="text/javascript" defer>
+    let autoPriceCheckboxes = document.getElementsByName("pizzaAutoPrice");
+    autoPriceCheckboxes.forEach(box => {
+        let pizzaId = box.parentElement.id;
+        let targetId = `pizzaPrice${pizzaId}`;
+        box.onclick = function () {
+            let priceInput = document.getElementById(targetId).querySelector("input");
+            if (!box.checked) {
+                priceInput.value = 0;
+                priceInput.readOnly = false;
+            } else {
+                priceInput.value = "Auto Price";
+                priceInput.readOnly = true;
+            }
+        }
+    });
+
+    let pizzaPriceInputs = document.querySelectorAll(".pizzaPriceInput");
+    pizzaPriceInputs.forEach(input => {
+        input.addEventListener("change", () => {
+            input.value = input.value;
+            console.log("Changed value: " + input.value);
+        });
+    })
+</script>
